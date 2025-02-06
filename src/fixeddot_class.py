@@ -9,20 +9,14 @@ class fixeddot(dot):
     A class that represents a fixed point in a 2D plane. It inherits from the dot class.
     """
 
-    _instances = None
-
     def __init__(self, x: float, y: float):
-        if not fixeddot._instance:
+        # Initialisierung nur einmal durchführen
+        if not hasattr(self, "_initialized"):
             super().__init__(x, y)
-            fixeddot._instances = self
+            self._initialized = True
 
     def set_coordinates(self, x, y):
         pass
-
-    @classmethod
-    def get_instance(cls):
-        """Gibt die einzige Instanz der Klasse zurück."""
-        return cls._instances
 
     def __str__(self):
         return f"({self._x}, {self._y})"
@@ -34,6 +28,6 @@ class fixeddot(dot):
 if __name__ == "__main__":
     d = fixeddot(1, 2)
     e = fixeddot(3, 4)
-    print(d)
-    print(e)
-    print(fixeddot.get_instance())
+    print("d:", d)
+    print("e:", e)
+    print("fixeddot.get_instance():", fixeddot.get_instance())
