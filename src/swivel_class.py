@@ -29,7 +29,7 @@ class swivel(dot):
         return self._phi
 
     def get_circlepoint(self) -> Tuple[float, float]:
-        return (self._x + self._r * cos(self._phi), self._y + self._r * sin(self._phi))
+        return (self.x_m + self._r * cos(self._phi), self.y_m + self._r * sin(self._phi))
 
     def set_coordinates(self, x, y):
         # Diese Methode bleibt leer, da die Koordinaten nicht verändert werden sollen
