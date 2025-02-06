@@ -9,11 +9,13 @@ class swivel(dot):
     """
     A class that represents a swivel point in a 2D plane. It inherits from the dot class. Phi is the current angle in rad of the swivel point.
     """
+    _instances=None
 
     def __init__(self, x: float, y: float, r: float, phi: float):
         super().__init__(x, y)
         self._r = r
         self._phi = phi
+        swivel.__instances = self
 
     def set_phi(self, phi: float):
         self._phi = phi
@@ -30,7 +32,7 @@ class swivel(dot):
     @classmethod
     def get_instances(cls):
         """Gibt alle erstellten Instanzen der Klasse zurück."""
-        return cls.self
+        return cls._instances
 
     def __str__(self):
         return f"({self._x}, {self._y}, {self._r}, {self._phi})"
