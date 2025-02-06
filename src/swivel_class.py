@@ -16,10 +16,14 @@ class swivel(dot):
             super().__init__(x_m + r * cos(phi), y_m + r * sin(phi))
             self._r = r
             self._phi = phi
+            self.x_m = x_m
+            self.y_m = y_m
             self._initialized = True
 
     def set_phi(self, phi: float):
         self._phi = phi
+        self._x= self.x_m + self._r * cos(self._phi)
+        self._y= self.y_m + self._r * sin(self._phi)
 
     def get_phi(self) -> float:
         return self._phi
@@ -48,3 +52,8 @@ if __name__ == "__main__":
     print("phi (nach set_phi):", s.get_phi())
     print("s (nach set_phi):", s)
     print("Circlepoint:", s.get_circlepoint())
+    print("coordinates")
+    print(s.get_coordinates())
+    s.set_phi(1)
+    print("coordinates")
+    print(s.get_coordinates())
