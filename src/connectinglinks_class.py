@@ -22,7 +22,7 @@ class connectionlinks:
         return cls._instances
     
     def __str__(self):
-        return f"Link between {self.dot1} and {self.dot2} with length {self.calc_length()}"
+        return f"Link between {self.dot1} and {self.dot2} with length {self.calc_length()}\n"
 
     def __repr__(self):
         return self.__str__()
