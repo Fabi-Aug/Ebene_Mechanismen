@@ -2,6 +2,7 @@ from dot_class import dot
 from connectinglinks_class import connectionlinks
 from fixeddot_class import fixeddot
 from swivel_class import swivel
+from movabledot_class import movabledot
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -11,44 +12,56 @@ import math
 
 class Calculation:
     '''
-    A class that represents a calculation, ploting and saving of a 2D plane.'''
+    A class that represents a calculation, plotting and saving of a 2D plane.'''
     def __init__(self):
-        self._dots = dot.get_instances()
+        self._dots = dot.get_all_instances()
+        self.movabledots = movabledot.get_instances()
         self._connections = connectionlinks.get_instances()
         self._fixeddots = fixeddot.get_instance()
         self._swivels = swivel.get_instance()
         self._n = len(self._dots)
         self._m = len(self._connections)
-
-        
-    @staticmethod
+ 
+    
     def check_dof(self):
         f = 2*self._n-2-2-self._m
         return f
 
-    @staticmethod
-    def calculate(self, phi):
+    def calculate(self, phi, phi2,params):
         
         self._swivels.set_phi(phi)
-        if self.check_dof(self) != 0:
+        if self.check_dof() != 0:
             raise ValueError("The calculation is not possible, because the system is not statically determined.")
-        x = np.array([dot.get_coordinates() for dot in self._dots]).reshape(-1,1)
-        print(x)
-        A = np.zeros((2*self._m, 2*self._n), dtype=int)
         
-        for i in range(2*self._m):  
-            A[i, i ] = 1  
-            A[i, i + 2] = -1
-        print(A)
-        l = np.dot(A, x)
-        print(l)
-        L = np.array([np.linalg.norm([l[i+2,0],l[i,0]]) for i in range(self._m)]).reshape(-1,1)
-        print(L)
+        l_c = np.zeros((0, 1))  
+        for connection in self._connections:
+            l_c = np.vstack((l_c, [[connection.calc_length()]])) 
 
-        
-        
+        for i, movable in enumerate(self.movabledots):
+            x, y = params[2*i:2*i+2]
+            movable.set_coordinates(x, y)
+
+
+        self._swivels.set_phi(phi2)
+        l_n = np.zeros((0, 1))  
+        for connection in self._connections:
+            l_n = np.vstack((l_n, [[connection.calc_length()]])) 
+
+        e = (l_n - l_c).flatten()
+        return e
     
-    
+    def optimizer(self,phi,phi2):
+        def objective(params):
+            return self.calculate(phi,phi2,params)
+
+        md = []
+        for movable in self.movabledots:
+            md.extend(movable.get_coordinates())
+
+        result = opt.least_squares(objective, md)
+        print(result)
+        return result.x
+
     def save(self, path):
         pass
 
@@ -63,15 +76,30 @@ class Calculation:
 
 if __name__ == "__main__":  
     d0 = fixeddot(0,0)
-    d1 = dot(10,35)
-    
+    d1 = movabledot(10,35)
+    s1 = swivel(-30,0,(5**2+10**2)**0.5,math.atan(10/5))
     c3 = connectionlinks(d0,d1)
-    s1 = swivel(-30,0,11.18,1.107)
     c4 = connectionlinks(d1,s1)
     calc = Calculation()
-    print(s1.get_circlepoint())
-    print(s1.get_coordinates())
-    print(calc)
-    print(f"dof: {calc.check_dof(calc)}\n")
-    print(f"calculation: {calc.calculate(calc,math.atan(10/5))}\n")
-    print(f"calculation: {calc.calculate(calc,1.5)}\n")
+    #print(c4.calc_length())
+    #print(c3.calc_length())
+
+    angles = np.linspace(0, 2 * math.pi, 360)  # 1000 Werte zwischen 0 und 2π
+    x_values = []
+    y_values = []
+
+    # Die Schleife geht nur bis zum vorletzten Index
+    for i in range(len(angles) - 1):
+        x, y = calc.optimizer(angles[i], angles[i+1])  # Optimierung ausführen
+        x_values.append(x)
+        y_values.append(y)
+
+
+    # Plot für X- und Y-Werte
+    plt.figure(figsize=(8, 6))
+    plt.plot( x_values,y_values, color="blue")
+    plt.xlim(-40, 20)
+    plt.ylim(-10, 40)
+    plt.show()
+
+
