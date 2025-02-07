@@ -59,11 +59,47 @@ class Calculation:
             md.extend(movable.get_coordinates())
 
         result = opt.least_squares(objective, md)
-        print(result)
+        #print(result)
         return result.x
 
-    def save(self, path):
+    def trajectory(self):
         pass
+
+    def save_csv(self, path, dot : movabledot):
+        coordinates = {}
+        angles = np.linspace(0, 2 * math.pi, 360)
+        start_coordinates = []
+        startdot = np.float64(dot.get_coordinates())
+        # Startwerte in die erste Zeile setzen und als Spaltenüberschriften verwenden
+        for i, movingdot in enumerate(self.movabledots):
+            coord = movingdot.get_coordinates()  # Koordinaten des beweglichen Punktes
+            start_coordinates.append(coord)  # Füge Startkoordinaten zu einer Liste hinzu
+            coordinates[coord] = [coord]  # Setze das Startkoordinatenpaar als Schlüssel im Dictionary
+        
+        print("Koordinaten:", coordinates)
+        print("Startkoordinaten:", start_coordinates)
+
+        # Durch die Winkel iterieren und berechnete Werte hinzufügen
+        for i in range(len(angles) - 1):
+            cal = self.optimizer(angles[i], angles[i+1])
+            for movingdot, start_coord in zip(self.movabledots, start_coordinates):
+                # Koordinaten des beweglichen Punktes hinzufügen
+                coordinates[start_coord].append(movingdot.get_coordinates())
+
+        
+        # DataFrame erstellen und speichern
+        df = pd.DataFrame.from_dict(coordinates, orient='columns')
+        print(startdot)
+        print(df.columns[0])
+        filtered_columns = [col for col in df.columns if col in startdot]
+        filtered_df = df[filtered_columns]
+
+        #print(df)
+        filtered_df.to_csv(path, index=False)
+
+        
+
+
 
     def load(self, path):
         pass
@@ -77,29 +113,27 @@ class Calculation:
 if __name__ == "__main__":  
     d0 = fixeddot(0,0)
     d1 = movabledot(10,35)
+    d2 = movabledot(5,10)
     s1 = swivel(-30,0,(5**2+10**2)**0.5,math.atan(10/5))
-    c3 = connectionlinks(d0,d1)
-    c4 = connectionlinks(d1,s1)
+
+    c1 = connectionlinks(d0, d1)
+    c2 = connectionlinks(d1, d2)
+    c3 = connectionlinks(d2, s1)
+    c4 = connectionlinks(d2, d0)
     calc = Calculation()
     #print(c4.calc_length())
     #print(c3.calc_length())
 
     angles = np.linspace(0, 2 * math.pi, 360)  # 1000 Werte zwischen 0 und 2π
-    x_values = []
-    y_values = []
 
-    # Die Schleife geht nur bis zum vorletzten Index
-    for i in range(len(angles) - 1):
-        x, y = calc.optimizer(angles[i], angles[i+1])  # Optimierung ausführen
-        x_values.append(x)
-        y_values.append(y)
+    calc.save_csv("C:/Schule_24-25/Python_Schule/AbschlussProjekt/Ebene_Mechanismen/src/test.csv", d2)
 
 
     # Plot für X- und Y-Werte
-    plt.figure(figsize=(8, 6))
-    plt.plot( x_values,y_values, color="blue")
-    plt.xlim(-40, 20)
-    plt.ylim(-10, 40)
-    plt.show()
+    #plt.figure(figsize=(8, 6))
+    #plt.plot( x_values,y_values, color="blue")
+    #plt.xlim(-40, 20)
+    #plt.ylim(-10, 40)
+    #plt.show()
 
 

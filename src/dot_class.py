@@ -20,7 +20,10 @@ class dot:
         self._y = y
 
     def get_coordinates(self) -> Tuple[float, float]:
-        return (self._x, self._y)
+        return (float(self._x),float(self._y))
+    
+    def get_self(self):
+        return self
     
     @classmethod
     def get_instances(cls):
