@@ -21,8 +21,27 @@ class connectionlinks:
         """Gibt alle erstellten Instanzen der Klasse zurück."""
         return cls._instances
     
+    def to_dict(self):
+        return{
+            #"__class__": self.__class__.__name__,
+            "dot1": self.dot1.to_dict(),
+            "dot2": self.dot2.to_dict()
+        }
+    
+    @classmethod
+    def create_instance(cls, **kwargs):
+        # Einfaches Erstellen eines neuen Objekts (ohne Suche), weil die Liste zuvor geleert wurde.
+        return cls(**kwargs)
+
+    @classmethod
+    def overwrite_all_instances(cls, data_list):
+        # data_list ist eine Liste von Dictionaries, die aus der Datenbank geladen wurden.
+        cls._instances.clear()  # Alle bisherigen Instanzen entfernen
+        for data in data_list:
+            cls.create_instance(**data)
+    
     def __str__(self):
-        return f"Link between {self.dot1} and {self.dot2} with length {self.calc_length()}\n"
+        return f"Link between {self.dot1} and {self.dot2}\n"
 
     def __repr__(self):
         return self.__str__()
