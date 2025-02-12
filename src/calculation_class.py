@@ -5,6 +5,7 @@ from swivel_class import swivel
 from movabledot_class import movabledot
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import matplotlib.patches as patches
 import numpy as np
 import pandas as pd
 import scipy.optimize as opt
@@ -82,9 +83,52 @@ class Calculation:
     
 
     def save_csv(self, path, dot: movabledot):
-            full_path = os.path.join("src", path)
-            df = pd.DataFrame({"x": dot.x_values, "y": dot.y_values})
-            df.to_csv(full_path, index=False)
+        full_path = os.path.join("src", path)
+        df = pd.DataFrame({"x": dot.x_values, "y": dot.y_values})
+        df.to_csv(full_path, index=False)
+
+
+
+    def static_plot(self):
+        fig, ax = plt.subplots(figsize=(5, 5))
+        fig.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.1, wspace=0.2, hspace=0.2)
+
+        # Fixed dots (rote Punkte)
+        for fixed in self._fixeddots:
+            x_fixed, y_fixed = fixed.get_coordinates()
+            ax.plot(x_fixed, y_fixed, 'ro')
+            # Text neben dem Punkt
+            ax.text(x_fixed + 0.1, y_fixed + 0.1, f'{fixed.id}', fontsize=12, color='black')
+
+        # Swivel dots (rote und blaue Punkte mit Kreisen)
+        for swivel in self._swivels:
+            ax.plot(swivel.x_m, swivel.y_m, 'ro')
+            x, y = swivel.get_coordinates()
+            ax.plot(x, y, 'bo')
+            # Text neben dem Punkt
+            ax.text(x + 0.1, y + 0.1, f'{swivel.id}', fontsize=12, color='black')
+            
+            # Kreis für den Swivel-Punkt
+            circle = patches.Circle((swivel.x_m, swivel.y_m), swivel._r, edgecolor='black', facecolor='none')
+            ax.add_patch(circle)
+
+        # Verbindungen (Linien zwischen den Punkten)
+        for connection in self._connections:
+            dot1_x, dot1_y = connection.dot1.get_coordinates()
+            dot2_x, dot2_y = connection.dot2.get_coordinates()
+            ax.plot([dot1_x, dot2_x], [dot1_y, dot2_y], linestyle='-', color='gray')
+
+        # Bewegliche Punkte (blaue Punkte)
+        for movingdot in self.movabledots:
+            x, y = movingdot.get_coordinates()
+            ax.plot(x, y, 'bo')
+            # Text neben dem Punkt
+            ax.text(x + 0.1, y + 0.1, f'{movingdot.id}', fontsize=12, color='black')
+
+        # Skalierung und Speichern
+        plt.autoscale()
+        plt.savefig("src/StaticPlot.png")
+
 
 
     def animate_plot(self, dot_trajectory: movabledot):
@@ -228,16 +272,17 @@ class Calculation:
         return f"Calculation: dots:{self._dots}\nconnections:{self._connections}\nfixeddots:{self._fixeddots}\nswivels:{self._swivels}\n"
 
 if __name__ == "__main__":  
-    d0 = fixeddot(0,0)
-    d1 = movabledot(10,35)
+    d0 = fixeddot(0,0,"d0")
+    d1 = movabledot(10,35,"d1")
     #d2 = movabledot(5,10)
-    s1 = swivel(-30,0,(5**2+10**2)**0.5,math.atan(10/5))
+    s1 = swivel(-30,0,(5**2+10**2)**0.5,math.atan(10/5),"s1")
 
     c1 = connectionlinks(d0, d1)
     c2 = connectionlinks(d1, s1)
     #c3 = connectionlinks(d2, s1)
     #c4 = connectionlinks(d2, d0)
     calc = Calculation()
+    calc.static_plot()
     #print(c4.calc_length())
     #print(c3.calc_length())
     calc.trajectory()

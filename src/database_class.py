@@ -60,10 +60,10 @@ class Database:
 
 if __name__ == "__main__":
     #Beispielobjekte erstellen
-    d0 = fixeddot(0, 0)
-    d1 = movabledot(10, 35)
-    d2 = movabledot(5, 10)
-    s1 = swivel(-30, 0, (5**2 + 10**2)**0.5, math.atan(10/5))
+    d0 = fixeddot(0, 0, "d0")
+    d1 = movabledot(10, 35, "d1")
+    d2 = movabledot(5, 10, "d2")
+    s1 = swivel(-30, 0, (5**2 + 10**2)**0.5, math.atan(10/5), "s1")
     c1 = connectionlinks(d0, d1)
     c2 = connectionlinks(d1, d2)
     c3 = connectionlinks(d2, s1)
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     
     Database.save_mechanism("mechanism.json")
 
-    Database.load_mechanism("mechanism.json")
+    Database.load_mechanism("strandbeest.json")
     print(swivel.get_instances())
     print(fixeddot.get_instances())
     print(movabledot.get_instances())

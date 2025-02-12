@@ -9,11 +9,11 @@ class swivel(dot):
     A class that represents a swivel point in a 2D plane. It inherits from the dot class.
     Phi is the current angle in rad of the swivel point.
     """
-    def __init__(self, x_m: float, y_m: float, r: float, phi: float):
+    def __init__(self, x_m: float, y_m: float, r: float, phi: float, id :str):
         # Da der Singleton-Dekorator __init__ mehrmals aufrufen kann,
         # initialisieren wir nur beim allerersten Aufruf.
         if not hasattr(self, '_initialized'):
-            super().__init__(x_m + r * cos(phi), y_m + r * sin(phi))
+            super().__init__(x_m + r * cos(phi), y_m + r * sin(phi),id=id)
             self._r = r
             self._phi = phi
             self.x_m = x_m
@@ -41,7 +41,8 @@ class swivel(dot):
             "x_m": self.x_m,
             "y_m": self.y_m,
             "r": self._r,
-            "phi": self._phi
+            "phi": self._phi,
+            "id": self.id
         }
     
     @classmethod
@@ -69,7 +70,7 @@ class swivel(dot):
 
 # Testbereich
 if __name__ == "__main__":
-    s = swivel(1, 2, 3, 4)
+    s = swivel(1, 2, 3, 4, "s")
     print("s:", s)
     print("phi:", s.get_phi())
     print("Circlepoint:", s.get_circlepoint())
