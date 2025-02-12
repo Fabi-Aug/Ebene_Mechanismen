@@ -65,37 +65,13 @@ class Calculation:
     def trajectory(self):
         pass
 
-    def save_csv(self, path, dot : movabledot):
-        coordinates = {}
-        angles = np.linspace(0, 2 * math.pi, 360)
-        start_coordinates = []
-        startdot = np.float64(dot.get_coordinates())
-        # Startwerte in die erste Zeile setzen und als Spaltenüberschriften verwenden
-        for i, movingdot in enumerate(self.movabledots):
-            coord = movingdot.get_coordinates()  # Koordinaten des beweglichen Punktes
-            start_coordinates.append(coord)  # Füge Startkoordinaten zu einer Liste hinzu
-            coordinates[coord] = [coord]  # Setze das Startkoordinatenpaar als Schlüssel im Dictionary
-        
-        print("Koordinaten:", coordinates)
-        print("Startkoordinaten:", start_coordinates)
 
-        # Durch die Winkel iterieren und berechnete Werte hinzufügen
-        for i in range(len(angles) - 1):
-            cal = self.optimizer(angles[i], angles[i+1])
-            for movingdot, start_coord in zip(self.movabledots, start_coordinates):
-                # Koordinaten des beweglichen Punktes hinzufügen
-                coordinates[start_coord].append(movingdot.get_coordinates())
 
-        
-        # DataFrame erstellen und speichern
-        df = pd.DataFrame.from_dict(coordinates, orient='columns')
-        print(startdot)
-        print(df.columns[0])
-        filtered_columns = [col for col in df.columns if col in startdot]
-        filtered_df = df[filtered_columns]
+    def save_csv(self, path, dot: movabledot):
+        df = pd.DataFrame({"x": dot.x_values, "y": dot.y_values})
+        df.to_csv(path, index=False)
 
-        #print(df)
-        filtered_df.to_csv(path, index=False)
+
 
         
 
