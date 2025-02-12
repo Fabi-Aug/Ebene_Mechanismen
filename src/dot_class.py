@@ -10,9 +10,10 @@ class dot:
         super().__init_subclass__(**kwargs)
         cls._instances = []  # Jede Unterklasse bekommt ihr eigenes _instances-Attribut
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, id):
         self._x = x
         self._y = y
+        self.id = id
         self.x_values = []
         self.y_values = []
         self.__class__._instances.append(self)
@@ -49,6 +50,6 @@ class dot:
         return self.__str__()
 
 if __name__ == "__main__":
-    d = dot(1, 2)
+    d = dot(1, 2, "d")
     print("Direkte dot Instanzen:", dot.get_instances())
     print("Alle dot Instanzen:", dot.get_all_instances())

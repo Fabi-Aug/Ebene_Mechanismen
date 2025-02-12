@@ -4,14 +4,15 @@ from dot_class import dot
 
 class movabledot(dot):
 
-    def __init__(self, x, y):
-        super().__init__(x, y)
+    def __init__(self, x, y, id):
+        super().__init__(x, y,id)
         
     def to_dict(self):
         return {
             #"__class__": self.__class__.__name__,
             "x": self._x,
-            "y": self._y
+            "y": self._y,
+            "id":self.id
             }
 
     @classmethod

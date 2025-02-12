@@ -9,10 +9,10 @@ class fixeddot(dot):
     A class that represents a fixed point in a 2D plane. It inherits from the dot class.
     """
 
-    def __init__(self, x: float, y: float):
+    def __init__(self, x: float, y: float, id: str):
         # Initialisierung nur einmal durchführen
         if not hasattr(self, "_initialized"):
-            super().__init__(x, y)
+            super().__init__(x, y, id)
             self._initialized = True
 
     def set_coordinates(self, x, y):
@@ -22,7 +22,8 @@ class fixeddot(dot):
         return {
             #"__class__": self.__class__.__name__,
             "x": self._x,
-            "y": self._y
+            "y": self._y,
+            "id": self.id
             }
     
     @classmethod
@@ -47,8 +48,8 @@ class fixeddot(dot):
 
 
 if __name__ == "__main__":
-    d = fixeddot(1, 2)
-    e = fixeddot(3, 4)
+    d = fixeddot(1, 2, "d")
+    e = fixeddot(3, 4, "e")
     print("d:", d)
     print("e:", e)
     print("fixeddot.get_instance():", fixeddot.get_instance())
