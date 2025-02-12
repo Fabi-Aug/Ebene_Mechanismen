@@ -35,6 +35,31 @@ class swivel(dot):
         # Diese Methode bleibt leer, da die Koordinaten nicht verändert werden sollen
         pass
 
+    def to_dict(self):
+        return{
+            #"__class__": self.__class__.__name__,
+            "x_m": self.x_m,
+            "y_m": self.y_m,
+            "r": self._r,
+            "phi": self._phi
+        }
+    
+    @classmethod
+    def create_instance(cls, **kwargs):
+        instance = cls.get_instance()  # Annahme: get_instance() liefert die existierende Instanz oder None
+        if instance is None:
+            # Falls noch keine Instanz existiert, wird eine neue erstellt
+            instance = cls(**kwargs)
+            cls._instance = instance
+        else:
+            # Falls bereits eine Instanz existiert, aktualisieren wir ihre Attribute.
+            # Hinweis: Falls du spezielle Logik (z.B. set_coordinates) hast, kannst du diese hier nutzen.
+            instance.__dict__.update(kwargs)
+        return instance
+
+
+    
+
     def __str__(self):
         return f"({self._x}, {self._y}, {self._r}, {self._phi})"
 
