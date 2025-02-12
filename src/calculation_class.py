@@ -223,11 +223,6 @@ class Calculation:
         #plt.show()
         ani.save("src/Animation.gif", writer='pillow', fps=30)
 
-
-
-
-
-
     
     def __str__(self):
         return f"Calculation: dots:{self._dots}\nconnections:{self._connections}\nfixeddots:{self._fixeddots}\nswivels:{self._swivels}\n"
