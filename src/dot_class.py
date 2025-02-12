@@ -13,6 +13,8 @@ class dot:
     def __init__(self, x, y):
         self._x = x
         self._y = y
+        self.x_values = []
+        self.y_values = []
         self.__class__._instances.append(self)
 
     def set_coordinates(self, x: float, y: float):
