@@ -1,4 +1,6 @@
 from dot_class import dot
+from fixeddot_class import fixeddot
+from movabledot_class import movabledot
 
 class connectionlinks:
     """Class to represent a connection between two dots."""
@@ -19,21 +21,29 @@ class connectionlinks:
         return cls._instances
 
     @classmethod
-    def create_instance(cls, **kwargs):
-        # e.g. kwargs: { "dot1": <dot>, "dot2": <dot> }
-        return cls(**kwargs)
+    def create_instance(cls, dot1: dot, dot2: dot):
+        """Erstellt eine Verbindungslinie zwischen zwei Punkten."""
+        return cls(dot1, dot2)
 
     @classmethod
-    def overwrite_all_instances(cls, data_list):
+    def overwrite_all_instances(cls, data_list, dot_instances):
+        """Überschreibt alle Instanzen von connectionlinks mit den geladenen Daten."""
         cls._instances.clear()
         for data in data_list:
-            cls.create_instance(**data)
+            # Suche die dots anhand der IDs
+            dot1 = cls.get_dot_by_id(data["dot1"]["id"], dot_instances)
+            dot2 = cls.get_dot_by_id(data["dot2"]["id"], dot_instances)
+            if dot1 and dot2:
+                cls.create_instance(dot1, dot2)
+
+    @classmethod
+    def get_dot_by_id(cls, dot_id, dot_instances):
+        """Sucht eine dot-Instanz anhand der ID in den gegebenen Instanzen."""
+        return dot_instances.get(dot_id)
 
     @classmethod
     def clear_instances(cls):
-        """
-        Clears out all connectionlinks.
-        """
+        """Löscht alle Instanzen von connectionlinks."""
         cls._instances.clear()
 
     def to_dict(self):

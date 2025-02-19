@@ -50,3 +50,9 @@ class swivel(dot):
     def clear_instances(cls):
         """Clear all instances of movabledot."""
         cls._instances.clear()
+
+    def __str__(self):
+        return f"Swivel point at ({self.x_m}, {self.y_m}) with radius {self._r} and angle {self._phi}."
+    
+    def __repr__(self):
+        return self.__str__()

@@ -91,7 +91,14 @@ class Calculation:
                 instance.y_values.append(instance.get_coordinates()[1])
         print("Trajectory calculated")
 
-    def save_csv(self, path, dot: movabledot):
+    def save_csv(self, path, id: str):
+        # Den passenden Dot suchen
+        dot = next((d for d in self._dots if d.id == id), None)
+        
+        if dot is None:
+            print(f"No dot found with id {id}")
+            return
+        
         full_path = os.path.join("src", path)
         df = pd.DataFrame({"x": dot.x_values, "y": dot.y_values})
         df.to_csv(full_path, index=False)
@@ -144,7 +151,13 @@ class Calculation:
         plt.savefig("src/StaticPlot.png")
         print("Static plot saved as 'src/StaticPlot.png'")
 
-    def animate_plot(self, dot_trajectory: movabledot):
+    def animate_plot(self, id: str):
+        dot_trajectory = next((d for d in self._dots if d.id == id), None)
+        
+        if dot_trajectory is None:
+            print(f"No dot found with id {id}")
+            return
+
         x_all = []
         y_all = []
         for dot in self._dots:
@@ -462,30 +475,21 @@ class Calculation:
 if __name__ == "__main__":
     d0 = fixeddot(0, 0, "d0")
     d1 = movabledot(10, 35, "d1")
-    # d2 = movabledot(5,10)
+
     s1 = swivel(-30, 0, (5**2 + 10**2) ** 0.5, math.atan(10 / 5), "s1")
     c1 = connectionlinks(d0, d1)
     c2 = connectionlinks(d1, s1)
-    # c3 = connectionlinks(d2, s1)
-    # c4 = connectionlinks(d2, d0)
-#    Database.load_mechanism("strandbeest.json")
+    #Database.save_mechanism("mechanism.json")
+
+    Database.load_mechanism("strandbeest.json")
+    #Database.load_mechanism("mechanism.json")
     calc = Calculation()
     
     calc.create_bom()
     calc.static_plot()
     calc.generate_openscad()
-    # print(c4.calc_length())
-    # print(c3.calc_length())
+
     calc.trajectory()
-    calc.animate_plot(d1)
-    calc.save_csv("test.csv", d1)
-    # angles = np.linspace(0, 2 * math.pi, 360)  # 1000 Werte zwischen 0 und 2π
-
-    # calc.save_csv("C:/Schule_24-25/Python_Schule/AbschlussProjekt/Ebene_Mechanismen/src/test.csv", d2)
-
-    # Plot für X- und Y-Werte
-    # plt.figure(figsize=(8, 6))
-    # plt.plot( x_values,y_values, color="blue")
-    # plt.xlim(-40, 20)
-    # plt.ylim(-10, 40)
-    # plt.show()
+    calc.save_csv("test.csv", "e")
+    calc.animate_plot("e")
+    
