@@ -6,6 +6,7 @@ from fixeddot_class import fixeddot
 from swivel_class import swivel
 from movabledot_class import movabledot
 from calculation_class import Calculation
+from database_class import Database  # Neuer Import für load/save
 
 st.title("Planar Mechanisms")
 
@@ -27,12 +28,12 @@ if tab == "Declaration":
         
         # Default data for fixed point, swivel point, and movable points
         points_data = [
-            {"Point": "P0", "X": 0.0, "Y": 0.0, "Type": "Fixed Point", "Radius": None},
-            {"Point": "P1", "X": -30.0, "Y": 0.0, "Type": "Swivel Point", "Radius": 11.0}
+            {"Point": "F", "X": 0.0, "Y": 0.0, "Type": "Fixed Point", "Radius": None},
+            {"Point": "S", "X": -30.0, "Y": 0.0, "Type": "Swivel Point", "Radius": 11.0}
         ]
 
         for i in range(num_movable_points):
-            points_data.append({"Point": f"P{i+2}", "X": 0.0, "Y": 0.0, "Type": "Movable Point", "Radius": None})
+            points_data.append({"Point": f"P{i}", "X": 0.0, "Y": 0.0, "Type": "Movable Point", "Radius": None})
 
         # Create DataFrame
         df = pd.DataFrame(points_data)
@@ -63,11 +64,11 @@ if tab == "Declaration":
             x, y, typ, radius = row["X"], row["Y"], row["Type"], row["Radius"]
             
             if typ == "Fixed Point":
-                st.session_state.points_objects[point_id] = fixeddot(x, y)
+                st.session_state.points_objects[point_id] = fixeddot(x, y, point_id)
             elif typ == "Swivel Point":
-                st.session_state.points_objects[point_id] = swivel(x, y, radius, 0)
+                st.session_state.points_objects[point_id] = swivel(x, y, radius, 0, point_id)
             elif typ == "Movable Point":
-                st.session_state.points_objects[point_id] = movabledot(x, y)
+                st.session_state.points_objects[point_id] = movabledot(x, y, point_id)
 
         # Connection selection
         st.subheader("Define Connections")
@@ -92,16 +93,18 @@ if tab == "Declaration":
         # Save connections as connectionlinks objects
         connection_objects = [connectionlinks(st.session_state.points_objects[p1], st.session_state.points_objects[p2]) for p1, p2 in connections]
         
-        # Reload button
-        if "reload" in st.session_state:
+        if "reload" not in st.session_state:
             st.session_state["reload"] = False
         
         if st.button("Save Values"):
-            st.session_state["points_data"] = edited_df.to_dict(orient="records")
-            st.session_state["connections_data"] = connections
-            # ich muss alles in jason speichern bei save und dann immer laden bei alles
-            #stand der dinge Problem: alle punkte werden gespeivchzert und instanzen kann ich nicht mehr löschen deshalb problem bei dof
-            st.rerun()
+            if st.session_state["reload"] == False:
+                st.session_state["reload"] = True
+                st.session_state["points_data"] = edited_df.to_dict(orient="records")
+                st.session_state["connections_data"] = connections
+                st.rerun()
+            else:
+                st.session_state["reload"] = False
+                Database.save_mechanism("test1.json")
         st.session_state["calc"] = Calculation()
         
     with prev:
@@ -117,6 +120,10 @@ if tab == "Declaration":
     # Degree of Freedom (DOF) Analysis Button
     st.subheader("Degree of Freedom Analysis")
     if st.button("Check DOF"):
+        # Lade den gespeicherten Mechanismus und überschreibe alte Instanzen
+        Database.load_mechanism("test1.json")
+        
+        # Jetzt können die DOF korrekt geprüft werden
         if st.session_state["calc"].check_dof() == 0:
             st.success("Kinematically Determined System")
         else:
