@@ -16,7 +16,8 @@ class Database:
     def save_mechanism(cls, path="mechanism.json"):
         """Speichert einen Mechanismus in der Datenbank, jeweils in einer eigenen Tabelle pro Klasse."""
         full_path = os.path.join("src", path)  # "src\" wird automatisch hinzugefügt
-        os.remove(full_path)
+        if os.path.exists(full_path):
+            os.remove(full_path)
         cls.db = TinyDB(full_path)
         
         # Fixeddot speichern in eigener Tabelle "fixeddot"
@@ -111,6 +112,7 @@ if __name__ == "__main__":
     c9=connectionlinks(e,d)
     c10=connectionlinks(d,f)
     Database.save_mechanism("strandbeest.json")
+    Database.save_mechanism("flksf.json")
 
     Database.load_mechanism("strandbeest.json")
     #print(swivel.get_instances())
