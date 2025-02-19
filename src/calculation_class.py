@@ -464,8 +464,13 @@ class Calculation:
             file.write("\n".join(scad_code))
         
         print(f"OpenSCAD code saved as {filename}")
-
-
+    
+    def get_dot_ids(self):
+        ids=[]
+        for instance in self.movabledots:
+            ids.append(instance.id)
+            
+        return ids
 
 
     def __str__(self):
@@ -484,6 +489,8 @@ if __name__ == "__main__":
     Database.load_mechanism("strandbeest.json")
     #Database.load_mechanism("mechanism.json")
     calc = Calculation()
+
+    print(calc.get_dot_ids())
     
     calc.create_bom()
     calc.static_plot()
