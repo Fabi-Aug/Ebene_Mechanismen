@@ -1,3 +1,5 @@
+import os
+import zipfile
 import streamlit as st
 import pandas as pd
 from dot_class import dot
@@ -17,7 +19,7 @@ def clear_all_inst():
 st.title("Planar Mechanisms")
 
 # Tabs for navigation
-tab = st.sidebar.radio("Select Section", ["Declaration", "Plot"])
+tab = st.sidebar.radio("Select Section", ["Declaration", "Save", "Plot"])
 
 if "points_data" not in st.session_state:
     st.session_state["points_data"] = []
@@ -92,36 +94,48 @@ if tab == "Declaration":
             connectionlinks(st.session_state.points_objects[p1], st.session_state.points_objects[p2])
             for p1, p2 in connections
         ]
-        
-        # Save Values button logic
-        if "reload" not in st.session_state:
-            st.session_state["reload"] = False
-        
-        if st.button("Save Values"):
-            if not st.session_state["reload"]:
-                st.session_state["reload"] = True
-                st.session_state["points_data"] = edited_df.to_dict(orient="records")
-                st.session_state["connections_data"] = connections
-                st.rerun()
-            else:
-                st.session_state["reload"] = False
-                Database.save_mechanism("test1.json")
         st.session_state["calc"] = Calculation()
+        
+        if st.button("Temporarily Save"):
+            Database.save_mechanism("temp_data.json")
+        # Save Values button logic
+        #if "reload" not in st.session_state:
+        #    st.session_state["reload"] = False
+        #
+        #if st.button("Save Values"):
+        #    if not st.session_state["reload"]:
+        #        st.session_state["reload"] = True
+        #        st.session_state["points_data"] = edited_df.to_dict(orient="records")
+        #        st.session_state["connections_data"] = connections
+        #        st.rerun()
+        #    else:
+        #        st.session_state["reload"] = False
+        #        Database.save_mechanism("test1.json")
+        
+        
         
     with prev:
         st.subheader("Preview")
         if st.button("Preview"):
+            #clear_all_inst()                                       #load dunktioniert nicht ganz richtig      
+            #Database.load_mechanism("test1.json")
+            st.session_state["calc"] = Calculation()
+            st.session_state["calc"].static_plot()
+            st.image("src/StaticPlot.png", caption="Mechanism Preview", use_container_width=True)
             for point_id, point in st.session_state.points_objects.items():
                 st.write(f"{point_id}: {point}")
             st.write("Connections:")
             for conn in connection_objects:
                 st.write(conn)
+            st.session_state["points_data"] = edited_df.to_dict(orient="records")       #test zeilen
+            st.session_state["connections_data"] = connections
+            
     
     st.divider()
     st.subheader("Degree of Freedom Analysis")
     if st.button("Check DOF"):
-        clear_all_inst()
-        Database.load_mechanism("test1.json")
+        #clear_all_inst()                           #load funktioniert nicht ganz richtig
+        #Database.load_mechanism("test1.json")
         st.session_state["calc"] = Calculation()
         st.write(st.session_state["calc"].__str__())
         if st.session_state["calc"].check_dof() == 0:
@@ -130,25 +144,71 @@ if tab == "Declaration":
             st.error("Kinematically Undetermined System")
             st.write(f"Degree of Freedom: {st.session_state['calc'].check_dof()}")
 
+elif tab == "Save":
+    st.subheader("Save Mechanism")
+    file_name = st.text_input("Enter file name (without extension):")  
+    if st.button("Save Mechanism"):
+        Database.save_mechanism(f"{file_name}.json")
+
 elif tab == "Plot":
     st.subheader("Mechanism Visualization")
-    data_source = st.selectbox(
-        "Load Value",
-        ["Use current Declaration data", "Load from database"]
-    )
+    
+    # Dropdown for selecting data source
+    data_source_options =[f for f in os.listdir("src") if f.endswith(".json")]
+    data_source = st.selectbox("Select data source:", data_source_options)
+
+    json_file_path = f"{data_source}"
+    clear_all_inst()
+    Database.load_mechanism(json_file_path)
+    st.success(f"Mechanism loaded from {json_file_path}")
+
+    # Check if points are available
     if "point_ids" not in st.session_state or not st.session_state["point_ids"]:
         st.warning("No points available! Please define points in the Declaration tab.")
     else:
         p_c = st.selectbox("Select a point for plotting", st.session_state["point_ids"], key="plot_point")
     
-    if st.button("plot"):
-        if data_source == "Use current Declaration data":
-            if st.session_state["points_data"]:
-                st.session_state["calc"] = Calculation()
-                st.session_state["calc"].trajectory()
-                st.session_state["calc"].animate_plot(st.session_state.points_objects[st.session_state["point_ids"][2]])
-                st.image("src/Animation.gif", caption="Mechanism Animation", use_container_width=True)
-            else:
-                st.warning("No saved values found!")
-        elif data_source == "Load from database":
-            st.info("Database loading functionality coming soon!")
+    if "calculation" not in st.session_state:
+        st.session_state["calculation"] = False 
+
+    if st.button("Calculate"):
+            st.session_state["calc"] = Calculation()
+            st.session_state["calc"].create_bom()
+            st.session_state["calc"].generate_openscad()
+            st.session_state["calc"].trajectory()
+            st.session_state["calc"].animate_plot(p_c)
+            st.session_state["calc"].save_csv("test.csv", p_c)
+            st.image("src/Animation.gif", caption="Mechanism Animation", use_container_width=True)
+            st.image("src/bom.png", caption="Bill of Materials", use_container_width=True)
+            st.session_state["calculation"] = True
+
+            #if st.session_state["points_data"]:
+            #    st.session_state["calc"] = Calculation()
+            #    st.session_state["calc"].trajectory()
+            #    st.session_state["calc"].animate_plot(st.session_state.points_objects[st.session_state["point_ids"][2]])
+            #    st.image("src/Animation.gif", caption="Mechanism Animation", use_container_width=True)
+            #else:
+            #      st.warning("No saved values found!")
+    if st.session_state.get("calculation"):  # Ensure calculation exists
+        st.subheader("Download all Data")
+
+        zip_filename = "mechanism_data.zip"
+        zip_path = os.path.join("src", zip_filename)  # Save in the same directory
+
+        # Create a ZIP file with all required files
+        with zipfile.ZipFile(zip_path, "w") as zipf:
+            files_to_include = ["Animation.gif", "bom.pdf", "test.csv", "mechanism.scad"]
+            
+            for file in files_to_include:
+                file_path = os.path.join("src", file)
+                if os.path.exists(file_path):
+                    zipf.write(file_path, arcname=file)  # Store without full path
+
+        # Provide download button for the ZIP file
+        with open(zip_path, "rb") as f:
+            st.download_button(
+                label="Download All Data",
+                data=f,
+                file_name=zip_filename,
+                mime="application/zip"
+            )
