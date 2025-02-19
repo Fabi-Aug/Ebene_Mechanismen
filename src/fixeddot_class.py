@@ -41,7 +41,7 @@ class fixeddot(dot):
         cls._instances.clear()
 
     def __str__(self):
-        return f"Fixed({self._x}, {self._y}, id={self.id})"
+        return f"Fixeddot({self._x}, {self._y}, id={self.id})"
 
     def __repr__(self):
         return self.__str__()
