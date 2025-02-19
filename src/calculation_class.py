@@ -16,6 +16,7 @@ from reportlab.lib import colors
 from reportlab.lib.colors import HexColor
 from reportlab.pdfgen import canvas
 import datetime
+from database_class import Database
 
 
 class Calculation:
@@ -408,6 +409,52 @@ class Calculation:
         c.save()
         print(f"BOM saved as {pdf_filename}")
 
+
+    def generate_openscad(self, filename="mechanism.scad"):
+        scad_code = []
+        scad_code.append("// OpenSCAD code for mechanism visualization")
+        scad_code.append("$fn=50; // Smooth rendering")
+
+        # Fixpunkte als Zylinder darstellen
+        for fixed in self._fixeddots:
+            x,y=fixed.get_coordinates()
+            scad_code.append(f"color(\"red\" )")
+            scad_code.append(f"translate([{x}, {y},-1]) cylinder(h=2,r=2);")
+
+        # Bewegliche Punkte als Kugeln darstellen
+        for movable in self.movabledots:
+            x,y=movable.get_coordinates()
+            scad_code.append(f"color(\"blue\")")
+            scad_code.append(f"translate([{x}, {y},-1]) cylinder(h=2,r=2);")
+
+        # Drehgelenke als größere Kugeln darstellen
+        for swivel in self._swivels:
+            x_m,y_m=swivel.x_m,swivel.y_m
+            scad_code.append(f"color(\"red\")")
+            scad_code.append(f"translate([{x_m}, {y_m},-3]) cylinder(h=2,r={swivel._r});")
+            x,y=swivel.get_coordinates()
+            scad_code.append(f"color(\"blue\")")
+            scad_code.append(f"translate([{x}, {y},-1]) cylinder(h=2,r=2);")
+
+        # Modul für Verbindungen als Zylinder zwischen Punkten
+        scad_code.append("module connection(p1, p2) {{dx = p2[0] - p1[0]; dy = p2[1] - p1[1]; length = sqrt(dx*dx + dy*dy); translate(p1) {{rotate([0, 0, atan2(dy, dx)]) {{translate([length/2, 0, 0]) cube([length, 2, 2], center=true); }}}}}}")
+        # Instanzen des connection-Moduls für jede Verbindung
+        for connection in self._connections:
+            x1,y1=connection.dot1.get_coordinates()
+            x2,y2=connection.dot2.get_coordinates()
+            scad_code.append(f"color(\"gray\")")
+            scad_code.append(f"connection([{x1}, {y1},0], [{x2}, {y2},0]);")
+        
+        # Speichern als .scad Datei
+        path=os.path.join("src", filename)
+        with open(path, "w") as file:
+            file.write("\n".join(scad_code))
+        
+        print(f"OpenSCAD code saved as {filename}")
+
+
+
+
     def __str__(self):
         return f"Calculation: dots:{self._dots}\nconnections:{self._connections}\nfixeddots:{self._fixeddots}\nswivels:{self._swivels}\n"
 
@@ -417,14 +464,16 @@ if __name__ == "__main__":
     d1 = movabledot(10, 35, "d1")
     # d2 = movabledot(5,10)
     s1 = swivel(-30, 0, (5**2 + 10**2) ** 0.5, math.atan(10 / 5), "s1")
-
     c1 = connectionlinks(d0, d1)
     c2 = connectionlinks(d1, s1)
     # c3 = connectionlinks(d2, s1)
     # c4 = connectionlinks(d2, d0)
+#    Database.load_mechanism("strandbeest.json")
     calc = Calculation()
+    
     calc.create_bom()
     calc.static_plot()
+    calc.generate_openscad()
     # print(c4.calc_length())
     # print(c3.calc_length())
     calc.trajectory()
