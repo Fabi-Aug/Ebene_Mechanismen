@@ -1,8 +1,7 @@
 from dot_class import dot
 from typing import Tuple
-from singleton import singleton
 
-@singleton
+
 class fixeddot(dot):
     """
     A class that represents a fixed point (singleton).
@@ -21,34 +20,25 @@ class fixeddot(dot):
     
     @classmethod
     def create_instance(cls, **kwargs):
-        instance = cls.get_instance()  # Using the singleton getter
-        if instance is None:
-            instance = cls(**kwargs)
-            cls._instance = instance
-        else:
-            # Update existing instance
-            instance.__dict__.update(kwargs)
-        return instance
+        # Create a new instance (assumes that the list has been cleared beforehand)
+        return cls(**kwargs)
 
     @classmethod
     def overwrite_all_instances(cls, data_list):
-        """
-        For a singleton, we assume there's only one record.
-        Clear any existing instance and create a new one with the data.
-        """
-        cls._instance = None  # Reset the singleton
-        cls.clear_instances()  # Clear the base _instances list
-        if data_list:
-            data = data_list[0]  # Expect only one fixed dot record
-            return cls.create_instance(**data)
-        return None
+        # data_list is a list of dictionaries loaded from the database.
+        cls._instances.clear()  # Remove all previous instances
+        for data in data_list:
+            cls.create_instance(**data)
+
+    @classmethod
+    def get_instances(cls):
+        """Return all created instances of this class."""
+        return cls._instances
 
     @classmethod
     def clear_instances(cls):
-        super().clear_instances()
-        cls._instance = None
-        if hasattr(cls, "_initialized"):
-            del cls._initialized
+        """Clear all instances of movabledot."""
+        cls._instances.clear()
 
     def __str__(self):
         return f"Fixed({self._x}, {self._y}, id={self.id})"
