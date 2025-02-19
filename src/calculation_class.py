@@ -37,17 +37,13 @@ class Calculation:
         # print(f"Degrees of freedom: {f}")
         return f
 
-    def calculate(self, phi, phi2, params):
+    def calculate(self, phi, phi2, params,l_c):
         for instance in self._swivels:
             instance.set_phi(phi)
         if self.check_dof() != 0:
             raise ValueError(
                 "The calculation is not possible, because the system is not statically determined."
             )
-
-        l_c = np.zeros((0, 1))
-        for connection in self._connections:
-            l_c = np.vstack((l_c, [[connection.calc_length()]]))
 
         for i, movable in enumerate(self.movabledots):
             x, y = params[2 * i : 2 * i + 2]
@@ -56,29 +52,39 @@ class Calculation:
         for instance in self._swivels:
             instance.set_phi(phi2)
         l_n = np.zeros((0, 1))
+
         for connection in self._connections:
             l_n = np.vstack((l_n, [[connection.calc_length()]]))
 
         e = (l_n - l_c).flatten()
-        # print(f"Error: {e}")
         return e
 
-    def optimizer(self, phi, phi2):
+    def optimizer(self, phi, phi2,l_c):
         def objective(params):
-            return self.calculate(phi, phi2, params)
+            return self.calculate(phi, phi2, params,l_c)
 
         md = []
         for movable in self.movabledots:
             md.extend(movable.get_coordinates())
-
+        # print (md)
         result = opt.least_squares(objective, md)
         # print(result)
         return result.x
 
     def trajectory(self):
-        angles = np.linspace(0, 2 * math.pi, 360)  # 1000 Werte zwischen 0 und 2π
+        angles = np.linspace(0, 2 * math.pi, 360)  # 360 Werte zwischen 0 und 2π
+        if self.check_dof() != 0:
+            raise ValueError(
+                "The calculation is not possible, because the system is not statically determined."
+            )
+
+        # Ausgangslängen berechnen
+        l_c = np.zeros((0, 1))
+        for connection in self._connections:
+            l_c = np.vstack((l_c, [[connection.calc_length()]]))
+        
         for i in range(len(angles) - 1):
-            self.optimizer(angles[i], angles[i + 1])  # Optimierung ausführen
+            self.optimizer(angles[i], angles[i + 1],l_c)  # Optimierung ausführen
 
             for instance in self.movabledots:
                 instance.x_values.append(instance.get_coordinates()[0])
@@ -103,6 +109,7 @@ class Calculation:
         df = pd.DataFrame({"x": dot.x_values, "y": dot.y_values})
         df.to_csv(full_path, index=False)
         print(f"CSV saved as {full_path}")
+
 
     def static_plot(self):
         fig, ax = plt.subplots(figsize=(5, 5))
@@ -150,6 +157,7 @@ class Calculation:
         plt.autoscale()
         plt.savefig("src/StaticPlot.png")
         print("Static plot saved as 'src/StaticPlot.png'")
+
 
     def animate_plot(self, id: str):
         dot_trajectory = next((d for d in self._dots if d.id == id), None)
@@ -303,6 +311,7 @@ class Calculation:
         # plt.show()
         ani.save("src/Animation.gif", writer="pillow", fps=30)
         print("Animation saved as 'src/Animation.gif'")
+
 
     def create_bom(self):  # Bill of Materials
         data = {"Checked": [], "Object": [], "Quantity": [], "Description": []}
@@ -465,6 +474,7 @@ class Calculation:
         
         print(f"OpenSCAD code saved as {filename}")
     
+
     def get_dot_ids(self):
         ids=[]
         for instance in self.movabledots:
@@ -478,19 +488,20 @@ class Calculation:
 
 
 if __name__ == "__main__":
-    d0 = fixeddot(0, 0, "d0")
-    d1 = movabledot(10, 35, "d1")
-
-    s1 = swivel(-30, 0, (5**2 + 10**2) ** 0.5, math.atan(10 / 5), "s1")
-    c1 = connectionlinks(d0, d1)
-    c2 = connectionlinks(d1, s1)
+#    d0 = fixeddot(0, 0, "d0")
+#    d1 = movabledot(10, 35, "d1")
+#
+#    s1 = swivel(-30, 0, (5**2 + 10**2) ** 0.5, math.atan(10 / 5), "s1")
+#    c1 = connectionlinks(d0, d1)
+#    c2 = connectionlinks(d1, s1)
     #Database.save_mechanism("mechanism.json")
 
     Database.load_mechanism("strandbeest.json")
     #Database.load_mechanism("mechanism.json")
+
     calc = Calculation()
 
-    print(calc.get_dot_ids())
+#    print(calc.get_dot_ids())
     
     calc.create_bom()
     calc.static_plot()
