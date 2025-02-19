@@ -1,34 +1,36 @@
 from typing import Tuple
 from dot_class import dot
 
-
 class movabledot(dot):
 
     def __init__(self, x, y, id):
-        super().__init__(x, y,id)
+        super().__init__(x, y, id)
         
     def to_dict(self):
         return {
-            #"__class__": self.__class__.__name__,
             "x": self._x,
             "y": self._y,
-            "id":self.id
-            }
+            "id": self.id
+        }
 
     @classmethod
     def create_instance(cls, **kwargs):
-        # Einfaches Erstellen eines neuen Objekts (ohne Suche), weil die Liste zuvor geleert wurde.
+        # Create a new instance (assumes that the list has been cleared beforehand)
         return cls(**kwargs)
 
     @classmethod
     def overwrite_all_instances(cls, data_list):
-        # data_list ist eine Liste von Dictionaries, die aus der Datenbank geladen wurden.
-        cls._instances.clear()  # Alle bisherigen Instanzen entfernen
+        # data_list is a list of dictionaries loaded from the database.
+        cls._instances.clear()  # Remove all previous instances
         for data in data_list:
             cls.create_instance(**data)
 
-
     @classmethod
     def get_instances(cls):
-        """Gibt alle erstellten Instanzen der Klasse zurück."""
+        """Return all created instances of this class."""
         return cls._instances
+
+    @classmethod
+    def clear_instances(cls):
+        """Clear all instances of movabledot."""
+        cls._instances.clear()
