@@ -1,9 +1,7 @@
-# singleton.py
-
 def singleton(cls):
     """
-    Ein Singleton-Dekorator, der die Klassenidentität bewahrt und
-    der dekorierten Klasse eine `get_instance`-Klassenmethode hinzufügt.
+    A singleton decorator that stores the instance as a class attribute,
+    and adds a clear_instance method to reset it.
     """
     original_new = cls.__new__
     instance = None
@@ -12,13 +10,13 @@ def singleton(cls):
         nonlocal instance
         if instance is None:
             if original_new is object.__new__:
-                # Falls original_new einfach object.__new__ ist,
-                # rufe es nur mit cls auf.
                 instance = original_new(cls)
             else:
                 instance = original_new(cls, *args, **kwargs)
+            cls._singleton_instance = instance  # store on the class
         return instance
 
     cls.__new__ = new_new
-    cls.get_instance = classmethod(lambda cls: instance)
+    cls.get_instance = classmethod(lambda cls: getattr(cls, "_singleton_instance", None))
+    cls.clear_instance = classmethod(lambda cls: setattr(cls, "_singleton_instance", None))
     return cls

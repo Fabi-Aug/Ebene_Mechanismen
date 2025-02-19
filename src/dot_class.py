@@ -2,13 +2,14 @@ from typing import Tuple
 
 class dot:
     """
-    A class that represents a point in a 2D plane.
+    A base class that represents a point in a 2D plane.
+    Each subclass has its own _instances list due to __init_subclass__.
     """
-    _instances = []  # Direkt in der Basisklasse definieren
+    _instances = []
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
-        cls._instances = []  # Jede Unterklasse bekommt ihr eigenes _instances-Attribut
+        cls._instances = []  # Each subclass has its own instance list
 
     def __init__(self, x, y, id):
         self._x = x
@@ -16,6 +17,7 @@ class dot:
         self.id = id
         self.x_values = []
         self.y_values = []
+        # Append to the subclass's _instances list
         self.__class__._instances.append(self)
 
     def set_coordinates(self, x: float, y: float):
@@ -23,33 +25,43 @@ class dot:
         self._y = y
 
     def get_coordinates(self) -> Tuple[float, float]:
-        return (float(self._x),float(self._y))
+        return (float(self._x), float(self._y))
     
     def get_self(self):
         return self
-    
+
     @classmethod
     def get_instances(cls):
-        """Gibt alle Instanzen der jeweiligen Klasse zurück.
-           Bei Unterklassen werden nur deren direkte Instanzen zurückgegeben."""
+        """Return instances specific to this class (not including subclasses)."""
         return cls._instances
 
     @classmethod
     def get_all_instances(cls):
-        """Gibt alle Instanzen zurück, die entweder von cls oder von einer Unterklasse von cls erstellt wurden."""
-        all_instances = list(cls._instances)  # Kopie der direkten Instanzen
+        """Return instances of cls and all its subclasses."""
+        all_instances = list(cls._instances)
         for subcls in cls.__subclasses__():
-            # Rekursiv alle Instanzen der Unterklassen hinzufügen
             all_instances.extend(subcls.get_all_instances())
         return all_instances
-    
+
+    @classmethod
+    def clear_instances(cls):
+        """
+        Clear the _instances list for this class.
+        (Subclasses that store singletons may override this to reset them as well.)
+        """
+        cls._instances.clear()
+
     def __str__(self):
-        return f"({self._x}, {self._y})"
-    
+        return f"({self._x}, {self._y}, id={self.id})"
+
     def __repr__(self):
         return self.__str__()
 
+
 if __name__ == "__main__":
+    # Quick test
     d = dot(1, 2, "d")
-    print("Direkte dot Instanzen:", dot.get_instances())
-    print("Alle dot Instanzen:", dot.get_all_instances())
+    print("Direct dot instances:", dot.get_instances())
+    print("All dot instances:", dot.get_all_instances())
+    dot.clear_instances()
+    print("After clearing:", dot.get_instances())
