@@ -98,21 +98,6 @@ if tab == "Declaration":
         
         if st.button("Temporarily Save"):
             Database.save_mechanism("temp_data.json")
-        # Save Values button logic
-        #if "reload" not in st.session_state:
-        #    st.session_state["reload"] = False
-        #
-        #if st.button("Save Values"):
-        #    if not st.session_state["reload"]:
-        #        st.session_state["reload"] = True
-        #        st.session_state["points_data"] = edited_df.to_dict(orient="records")
-        #        st.session_state["connections_data"] = connections
-        #        st.rerun()
-        #    else:
-        #        st.session_state["reload"] = False
-        #        Database.save_mechanism("test1.json")
-        
-        
         
     with prev:
         st.subheader("Preview")
@@ -137,7 +122,6 @@ if tab == "Declaration":
         #clear_all_inst()                           #load funktioniert nicht ganz richtig
         #Database.load_mechanism("test1.json")
         st.session_state["calc"] = Calculation()
-        st.write(st.session_state["calc"].__str__())
         if st.session_state["calc"].check_dof() == 0:
             st.success("Kinematically Determined System")
         else:
@@ -149,6 +133,7 @@ elif tab == "Save":
     file_name = st.text_input("Enter file name (without extension):")  
     if st.button("Save Mechanism"):
         Database.save_mechanism(f"{file_name}.json")
+        st.success(f"Mechanism saved as {file_name}.json")
 
 elif tab == "Plot":
     st.subheader("Mechanism Visualization")
@@ -161,15 +146,22 @@ elif tab == "Plot":
     clear_all_inst()
     Database.load_mechanism(json_file_path)
     st.success(f"Mechanism loaded from {json_file_path}")
-
+    st.session_state["calc"] = Calculation()
     # Check if points are available
-    if "point_ids" not in st.session_state or not st.session_state["point_ids"]:
-        st.warning("No points available! Please define points in the Declaration tab.")
+    # Check if points are available
+
+    point_ids_list = st.session_state["calc"].get_dot_ids()  # IDs abrufen
+    if point_ids_list:
+        p_c = st.selectbox("Select a point for plotting", point_ids_list, key="plot_point")
     else:
-        p_c = st.selectbox("Select a point for plotting", st.session_state["point_ids"], key="plot_point")
-    
+        st.warning("No valid point IDs found in calculation data.")
+
     if "calculation" not in st.session_state:
         st.session_state["calculation"] = False 
+    
+    if st.session_state["calculation"] == False:                #preview funktioniert nicht ganz richtig!!!!!!!!!!
+            st.session_state["calc"].static_plot()
+            st.image("src/StaticPlot.png", caption="Mechanism Preview", use_container_width=True)
 
     if st.button("Calculate"):
             st.session_state["calc"] = Calculation()
@@ -179,7 +171,6 @@ elif tab == "Plot":
             st.session_state["calc"].animate_plot(p_c)
             st.session_state["calc"].save_csv("test.csv", p_c)
             st.image("src/Animation.gif", caption="Mechanism Animation", use_container_width=True)
-            st.image("src/bom.png", caption="Bill of Materials", use_container_width=True)
             st.session_state["calculation"] = True
 
             #if st.session_state["points_data"]:
