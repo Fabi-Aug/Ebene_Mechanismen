@@ -3,8 +3,8 @@
 ## Einleitung
 - **Projektname:** Ebene_Mechanismen
 - **Projekttyp:** Simulation
-- **Autor(en):** Fabian Augschöll, Manuel Hofer
-- **Datum:** 05.02.2025
+- **Autoren:** Fabian Augschöll, Manuel Hofer
+- **Datum:** 27.02.2025
 - **Kurzbeschreibung:** Simulation ebener Mechanismen zur Berechnung von Längenfehlern und Visualisierung der kinematischen Bewegung.
 - **Mindestzielsetzung:** 
     - Implementierung einer Python-Anwendung mit Streamlit-Web-UI
@@ -34,17 +34,126 @@ Dieses Projekt befasst sich mit der Simulation ebener Mechanismen. Die methodisc
    ```bash
    git clone <repository-url>
    ```
-2. **Abhängigkeiten installieren:**  
+2. **Virtual environemt erstellen:**  
+   ```bash
+   python -m venv venv
+   ```
+3. **Abhängigkeiten installieren:**  
    ```bash
    pip install -r requirements.txt
    ```
-3. **Projekt starten:**  
+4. **Projekt starten:**  
    ```bash
    streamlit run ui.py
    ```
 
+## Projektstruktur
+```
+├── README.md 
+├── requirements.txt 
+├── doc/  # Dokumentationen und Beispielbilder
+├── src/  # Quellcode
+```
+
 ## UML-Diagramme
-*Platzhalter für UML-Diagramme,  die Klassenstruktur und die Beziehungen*
+- **Aufbau der Klassenstruktur:**
+  ```mermaid
+    classDiagram
+    class dot {
+        - _x
+        - _y
+        - id
+        - x_values
+        - y_values
+        - _instances
+        + set_coordinates(x, y)
+        + get_coordinates()
+        + get_self()
+        + get_instances()
+        + get_all_instances()
+        + clear_instances()
+    }
+
+    class fixeddot {
+        + to_dict()
+        + create_instance()
+        + overwrite_all_instances()
+        + get_instances()
+        + clear_instances()
+    }
+
+    class movabledot {
+        + to_dict()
+        + create_instance()
+        + overwrite_all_instances()
+        + get_instances()
+        + clear_instances()
+    }
+
+    class swivel {
+        - x_m
+        - y_m
+        - _r
+        - _phi
+        + set_phi(phi)
+        + to_dict()
+        + create_instance()
+        + overwrite_all_instances()
+        + get_instances()
+        + clear_instances()
+    }
+
+    class connectionlinks {
+        - dot1
+        - dot2
+        - _instances
+        + calc_length()
+        + get_instances()
+        + create_instance()
+        + overwrite_all_instances()
+        + get_dot_by_id()
+        + clear_instances()
+        + to_dict()
+    }
+
+    class Database {
+        - db
+        + save_mechanism(path)
+        + load_mechanism(path)
+    }
+
+    dot <|-- fixeddot
+    dot <|-- movabledot
+    dot <|-- swivel
+    connectionlinks --> dot : "connects"
+    Database --> fixeddot : "manages"
+    Database --> movabledot : "manages"
+    Database --> swivel : "manages"
+    Database --> connectionlinks : "manages"
+  ```
+
+
+- **Aufbau der Berechnungsklasse:**  
+  ```mermaid
+     classDiagram
+    class Calculation {
+        - _dots
+        - movabledots
+        - _connections
+        - _fixeddots
+        - _swivels
+        - _n
+        - _m
+        + check_dof()
+        + calculate(phi, phi2, params, l_c)
+        + optimizer(phi, phi2, l_c)
+        + trajectory()
+        + save_csv(path, id)
+        + static_plot()
+        + animate_plot(id)
+        + create_bom()
+    }
+  ```
 
 
 ## Proof of Concept: Berechnung
@@ -58,45 +167,114 @@ Dieses Projekt befasst sich mit der Simulation ebener Mechanismen. Die methodisc
 
 ## Erweiterungen
 Bisher wurden folgende Erweiterungen implementiert:
-- **Animation als GIF speichern:**  
-  Die Simulation kann als animierte GIF exportiert werden, um Bewegungsabläufe und Fehlerverläufe zu dokumentieren.
+- **Animation als GIF exportieren:**  
+  Die Simulation kann als animierte GIF exportiert werden, um Bewegungsabläufe und Fehlerverläufe zu dokumentieren.  
+  *siehe [Proof of Concept](#proof-of-concept-berechnung)*
   
 - **Stückliste als PDF:**  
-  Eine automatische Generierung einer Stückliste im PDF-Format, die alle relevanten Komponenten des Mechanismus (Gestänge, Antriebe, Gelenke) auflistet. 
+  Eine automatische Generierung einer Stückliste im PDF-Format, die alle relevanten Komponenten des Mechanismus (Gestänge, Antriebe, Gelenke) auflistet.  
+  *Beispiel anhand vom "two-legged-Strandbeest"*
+  ![Stückliste](doc/PDF.png)
   
 - **3D-Volumenmodell mittels OpenSCAD:**  
-  Erstellung eines 3D-Modells des Mechanismus, das in OpenSCAD weiterverarbeitet werden kann, um volumetrische Analysen und Visualisierungen zu ermöglichen.
+  Erstellung eines 3D-Modells des Mechanismus, das in OpenSCAD weiterverarbeitet werden kann, um volumetrische Analysen und Visualisierungen zu ermöglichen.  
+  *Beispiel anhand vom "two-legged-Strandbeest"*
+  ![CAD](doc/CAD_SS.png)
+
 
 - **Erweiterung auf mehrere Fixpunkte:**
-  Die Simulation unterstützt nun mehrere Fixpunkte, um die Bewegung des Mechanismus in verschiedenen Konfigurationen zu analysieren. Beispiel: two-legged-Strandbeest
+  Die Simulation unterstützt nun mehrere Fixpunkte, um die Bewegung des Mechanismus in verschiedenen Konfigurationen zu analysieren.  *Beispiel anhand vom "two-legged-Strandbeest"*
+  ![two_legged_strandbeest](doc/two_legged_strandbeest.gif)
 
 - **Auszeichnungssprache mittels JSON-Datenbank**
   Implementierung einer JSON-Datenbank mittels TinyDB zur Speicherung und zum Laden von Mechanismen. Zusätzlich können externe Mechanismen importiert und in der Simulation verwendet werden. Bereits erstellte Mechanismen können heruntergeladen werden. 
+  - **Aufbau der Datenbank:**
+  ```json
+  {
+      "fixeddot": {
+          "1": {
+              "x": 0,
+              "y": 0,
+              "id": "d0"
+          }
+      },
+      "movabledot": {
+          "1": {
+              "x": 10,
+              "y": 35,
+              "id": "d1"
+          }
+      },
+      "swivel": {
+          "1": {
+              "x_m": -30,
+              "y_m": 0,
+              "r": 11.180339887498949,
+              "phi": 1.1071487177940904,
+              "id": "s1"
+          }
+      },
+      "connectionlinks": {
+          "1": {
+              "dot1": {
+                  "x": 0,
+                  "y": 0,
+                  "id": "d0"
+              },
+              "dot2": {
+                  "x": 10,
+                  "y": 35,
+                  "id": "d1"
+              }
+          },
+          "2": {
+              "dot1": {
+                  "x": 10,
+                  "y": 35,
+                  "id": "d1"
+              },
+              "dot2": {
+                  "x_m": -30,
+                  "y_m": 0,
+                  "r": 11.180339887498949,
+                  "phi": 1.1071487177940904,
+                  "id": "s1"
+              }
+          }
+      }
+  }
+  ```
 
 ## Walkthrough
-- Variante A: Punkte und Verbindungen im build-Tab händisch erstellen
-  - Mechanismus definieren (bild)
-  - live-preview wird autoamtisch erstellt (bild)
+- **Variante A:** Punkte und Verbindungen im Build-Tab händisch erstellen
+  - Mechanismus definieren 
+  - live-preview wird autoamtisch erstellt 
   - Freiheitsgrade können, müssen aber nicht, händisch überprüft werden 
+  ![Build-Tab](doc/Build_tab.png)
   - der erstellte Mechanismus muss für die Berechnung gespeichert werden (entwerder Temporär oder als eigene Datenbank)
-  - in den plot-Tab wechseln und als data source den erstellten Mechanismus auswählen (temporäre Datei bzw. eigene Datenbank)
+  ![Build-Tab-Save](doc/Build_tab_save.png)
+  - in den Plot-Tab wechseln und als data source den erstellten Mechanismus auswählen (temporäre Datei bzw. eigene Datenbank)
+  ![Plot-Tab](doc/Plot_tab_select.png)
   - Punkt auswählen dessen Bahnkurve zusätzlich zum Bewegungsablauf geplottet werden soll
   - mit *calculate* die Berechnung starten (Berechnung und erstellen der Simulation kann einige Sekunden dauern)
-  - im Download-Bereich unter der Visulaisierung können alle erstellen Dateien (Stückliste, CSV-Bahnkurve, CAD-Modell, Animation, Datenbank) heruntergeladen werden
+  - im Download-Bereich unter der Visulaisierung können alle erstellen Dateien (Stückliste, CSV-Bahnkurve, CAD-Modell, Animation, Datenbank, Bahnkurve als png) heruntergeladen werden
+  ![Plot-Tab-Download](doc/Plot_tab_download.png)	
 
-- Variante B: Mechanismus importieren
+- **Variante B:** Mechanismus importieren
   - plot-Tab öffnen
-  - bei der Auswahl der data source eine vorhandene Datenbank auswählen bzw. eine eigene hochladen
+  - bei der Auswahl der data source eine vorhandene Datenbank auswählen bzw. über den Upload eigene hochladen
+  ![Plot-Tab-Upload](doc/Plot_tab_upload.png)
+  - Punkt auswählen dessen Bahnkurve zusätzlich zum Bewegungsablauf geplottet werden soll
+  - mit *calculate* die Berechnung starten (Berechnung und erstellen der Simulation kann einige Sekunden dauern)
+  - im Download-Bereich unter der Visulaisierung können alle erstellen Dateien (Stückliste, CSV-Bahnkurve, CAD-Modell, Animation, Datenbank, Bahnkurve als png) heruntergeladen werden
+  
+
+- **Report-Tab**
+  - im Report-Tab findet sich eine zusammenfassung aller erstellten Dateien und der Berechnung, deren Auswertung und einer Fehleranalyse.
 
 
 
-## Projektstruktur
-```
-├── README.md
-├── requirements.txt
-├── main.py
 
-```
 
 ## Weiterführende Informationen
 *Hier können weiterführende Links, Literaturhinweise und zusätzliche Dokumentationen ergänzt werden, um einen tieferen Einblick in die Methodik und die zugrunde liegenden mathematischen Modelle zu geben.*
