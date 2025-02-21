@@ -19,7 +19,7 @@ def clear_all_inst():
 st.title("Planar Mechanisms")
 
 # Tabs for navigation
-tab = st.sidebar.radio("Select Section", ["Build", "Plot"])
+tab = st.sidebar.radio("Select Section", ["Build", "Plot", "Report"])
 
 if "points_data" not in st.session_state:
     st.session_state["points_data"] = []
@@ -27,33 +27,39 @@ if "connections_data" not in st.session_state:
     st.session_state["connections_data"] = []
 
 if tab == "Build":
-    # 1) Clear all old instances:
+    # Clear all old instances:
     clear_all_inst()
-    # 2) Read user input and create new points
     init, prev = st.columns(2)
     with init:
         st.subheader("Define Points")
-        num_movable_points = st.number_input("Number of movable points", min_value=1, max_value=10, value=1)
+        # Add a number input for fixed points
+        num_fixed_points = st.number_input("Number of fixed points", min_value=1, max_value=10, value=1, key="num_fixed")
+        num_movable_points = st.number_input("Number of movable points", min_value=1, max_value=10, value=1, key="num_movable")
         
-        # Default data for fixed point, swivel point, and movable points
-        points_data = [
-            {"Point": "F", "X": 0.0, "Y": 0.0, "Type": "Fixed Point", "Radius": None},
-            {"Point": "S", "X": -30.0, "Y": 0.0, "Type": "Swivel Point", "Radius": 11.0}
-        ]
+        # Build the list of point dictionaries:
+        points_data = []
+        # Create fixed points (e.g., F0, F1, ...)
+        for i in range(num_fixed_points):
+            points_data.append({"Point": f"F{i}", "X": 0.0, "Y": 0.0, "Type": "Fixed Point", "Radius": None})
+        # Create a swivel point (kept singular here; adjust similarly if you want multiples)
+        points_data.append({"Point": "S", "X": -30.0, "Y": 0.0, "Type": "Swivel Point", "Radius": 11.0})
+        # Create movable points (e.g., P0, P1, ...)
         for i in range(num_movable_points):
             points_data.append({"Point": f"P{i}", "X": 0.0, "Y": 0.0, "Type": "Movable Point", "Radius": None})
-
-        # Create DataFrame
+        
+        # Create DataFrame from the points data
         df = pd.DataFrame(points_data)
-
-        # Editable table
+        
+        # For the "Type" column, disable editing for fixed and swivel points
+        disabled_list = [True] * num_fixed_points + [True] + [False] * num_movable_points
+        
         edited_df = st.data_editor(
             df,
             column_config={
                 "Type": st.column_config.SelectboxColumn(
                     "Point Type",
                     options=["Fixed Point", "Swivel Point", "Movable Point"],
-                    disabled=[True, True] + [False] * num_movable_points
+                    disabled=disabled_list
                 ),
                 "Radius": st.column_config.NumberColumn(
                     "Radius",
@@ -63,8 +69,8 @@ if tab == "Build":
             },
             hide_index=True
         )
-
-        # Create new point instances based on edited_df
+        
+        # Create new point instances based on the edited data:
         st.session_state.points_objects = {}
         for _, row in edited_df.iterrows():
             point_id = row["Point"]
@@ -75,8 +81,8 @@ if tab == "Build":
                 st.session_state.points_objects[point_id] = swivel(x, y, radius, 0, point_id)
             elif typ == "Movable Point":
                 st.session_state.points_objects[point_id] = movabledot(x, y, point_id)
-
-        # 3) Create connections
+        
+        # Define connections as before:
         st.subheader("Define Connections")
         st.session_state["point_ids"] = [row["Point"] for _, row in edited_df.iterrows()]
         connections = []
@@ -89,34 +95,28 @@ if tab == "Build":
                 p2 = st.selectbox(f"Connection {i+1} - Point 2", st.session_state["point_ids"], key=f"conn_{i}_p2")
             connections.append((p1, p2))
         
-        # Create connectionlinks instances
+        # Create connection links
         connection_objects = [
             connectionlinks(st.session_state.points_objects[p1], st.session_state.points_objects[p2])
             for p1, p2 in connections
         ]
         st.session_state["calc"] = Calculation()
-        
+    
     with prev:
         st.subheader("Preview")
-        
         st.session_state["calc"] = Calculation()
         st.session_state["calc"].static_plot()
         st.image("src/StaticPlot.png", caption="Mechanism Preview", use_container_width=True)
-        #for point_id, point in st.session_state.points_objects.items():
-        #    st.write(f"{point_id}: {point}")
-        #st.write("Connections:")
-        #for conn in connection_objects:
-        #    st.write(conn)
-        #st.session_state["points_data"] = edited_df.to_dict(orient="records")       #test zeilen
-        #st.session_state["connections_data"] = connections
+        
         if st.button("Check DOF"):
             st.session_state["calc"] = Calculation()
-            if st.session_state["calc"].check_dof() == 0:
+            dof = st.session_state["calc"].check_dof()
+            if dof == 0:
                 st.success("Kinematically Determined System")
             else:
                 st.error("Kinematically Undetermined System")
-                st.write(f"Degree of Freedom: {st.session_state['calc'].check_dof()}")
-
+                st.write(f"Degree of Freedom: {dof}")
+        
         if st.button("Temporarily Save"):
             if st.session_state["calc"].check_dof() == 0:
                 Database.save_mechanism("builded_mechanism.json")
@@ -126,13 +126,13 @@ if tab == "Build":
     
     st.divider()
     st.subheader("Save Mechanism")
-    file_name = st.text_input("Enter file name (without extension):")  
+    file_name = st.text_input("Enter file name (without extension):")
     if st.button("Save Mechanism"):
         if st.session_state["calc"].check_dof() == 0:
             if not file_name:
                 st.error("Please enter a valid file name")
             else:
-                Database.save_mechanism(f"{file_name}.json")    
+                Database.save_mechanism(f"{file_name}.json")
                 st.success(f"Mechanism saved as {file_name}.json")
         else:
             st.error("Cannot save, mechanism is kinematically undetermined")
@@ -176,7 +176,7 @@ elif tab == "Plot":
         # (Rest of your code remains unchanged)
         point_ids_list = st.session_state["calc"].get_dot_ids()  # IDs abrufen
         if point_ids_list:
-            p_c = st.selectbox("Select a point for plotting", point_ids_list, key="plot_point")
+            st.session_state["p_c"] = st.selectbox("Select a point for trajectory", point_ids_list, key="plot_point")
         else:
             st.warning("No valid point IDs found in calculation data.")
 
@@ -190,9 +190,13 @@ elif tab == "Plot":
     with prev:
         st.session_state["calc"].static_plot()
         st.image("src/StaticPlot.png", caption=f"{data_source} Preview", use_container_width=True)
+    
+    if "file_name" not in st.session_state:
+        st.session_state["file_name"] = None
 
     if st.session_state["calculation"]:
         file_name = os.path.splitext(data_source)[0]
+        st.session_state["file_name"] = file_name
         st.subheader(file_name)
         
         # Only perform expensive calculations if they haven't been done already.
@@ -201,8 +205,8 @@ elif tab == "Plot":
             st.session_state["calc"].create_bom()
             st.session_state["calc"].generate_openscad()
             st.session_state["calc"].trajectory()
-            st.session_state["calc"].animate_plot(p_c)
-            st.session_state["calc"].save_csv("mechanism.csv", p_c)
+            st.session_state["calc"].animate_plot(st.session_state["p_c"])
+            st.session_state["calc"].save_csv("mechanism.csv", st.session_state["p_c"])
             st.session_state["calc_done"] = True
         
         st.image("src/Animation.gif", caption="Mechanism Animation", use_container_width=True)
@@ -242,7 +246,7 @@ elif tab == "Plot":
                     file_name=f"{file_name}_animation.gif",
                     mime="image/gif"
                 )
-        elif selected_option == f"{file_name} Database  ":
+        elif selected_option == f"{file_name} Database":
             with open(f"src/{file_name}.json", "rb") as json_file:
                 st.download_button(
                     label=f"Download",
@@ -274,3 +278,15 @@ elif tab == "Plot":
                 file_name=zip_filename,
                 mime="application/zip"
             )
+elif tab == "Report":
+    st.subheader("Residual Error")
+    st.session_state["calc"] = Calculation()
+    #st.session_state["calc"].error_plot()
+    #st.image("src/ErrorPlot.png", caption="Residual Error Plot", use_container_width=True)
+    st.subheader("Trajectory")
+    #st.session_state["calc"].trajectory_plot() #achtung funktionsname möglicherweise falsch
+    #st.image("src/Animation_last_frame.png", caption="Trajectory Plot", use_container_width=True)
+    if st.session_state["calculation"]:
+        st.write(f"The trajectory plot shows the mechanism({st.session_state["file_name"]}) path of the selected point {st.session_state["p_c"]}.")
+    
+    
