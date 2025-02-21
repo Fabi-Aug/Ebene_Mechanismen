@@ -21,7 +21,8 @@ from database_class import Database
 
 class Calculation:
     """
-    A class that represents a calculation, plotting and saving of a 2D plane."""
+    A class that represents a calculation, plotting and saving of a 2D plane.
+    """
 
     def __init__(self):
         self._dots = dot.get_all_instances()
@@ -32,6 +33,7 @@ class Calculation:
         self._n = len(self._dots)
         self._m = len(self._connections)
 
+
     def check_dof(self):
         N = len(self._dots)  # Alle Punkte (Fixpunkte + bewegliche Punkte)
         J = len(self._fixeddots) + len(self._swivels)  # Fixpunkte + Swivels
@@ -39,6 +41,7 @@ class Calculation:
 
         F = 2* N - 2 * J - M  # Grübler-Gleichung für ebene Systeme
         return F
+
 
     def calculate(self, phi, phi2, params,l_c):
         for instance in self._swivels:
@@ -62,6 +65,7 @@ class Calculation:
         e = (l_n - l_c).flatten()
         return e
 
+
     def optimizer(self, phi, phi2,l_c):
         def objective(params):
             return self.calculate(phi, phi2, params,l_c)
@@ -71,8 +75,10 @@ class Calculation:
             md.extend(movable.get_coordinates())
         # print (md)
         result = opt.least_squares(objective, md)
-        # print(result)
-        return result.x
+        #print(result)
+        
+        return result
+
 
     def trajectory(self):
         angles = np.linspace(0, 2 * math.pi, 360)  # 360 Werte zwischen 0 und 2π
@@ -86,9 +92,10 @@ class Calculation:
         for connection in self._connections:
             l_c = np.vstack((l_c, [[connection.calc_length()]]))
         
+        self.residual_error=[]
         for i in range(len(angles) - 1):
-            self.optimizer(angles[i], angles[i + 1],l_c)  # Optimierung ausführen
-
+            result=self.optimizer(angles[i], angles[i + 1],l_c)  # Optimierung ausführen
+            self.residual_error.append(result.optimality)
             for instance in self.movabledots:
                 instance.x_values.append(instance.get_coordinates()[0])
                 instance.y_values.append(instance.get_coordinates()[1])
@@ -99,6 +106,7 @@ class Calculation:
                 instance.x_values.append(instance.get_coordinates()[0])
                 instance.y_values.append(instance.get_coordinates()[1])
         print("Trajectory calculated")
+
 
     def save_csv(self, path, id: str):
         # Den passenden Dot suchen
@@ -311,8 +319,9 @@ class Calculation:
             repeat=False,
             interval=25,
         )
-        # plt.show()
+        #plt.show()
         ani.save("src/Animation.gif", writer="pillow", fps=30)
+        plt.savefig("src/Animation_last_frame.png", dpi=600)
         print("Animation saved as 'src/Animation.gif'")
 
 
@@ -487,6 +496,18 @@ class Calculation:
         return ids
 
 
+    def error_plot(self):
+        plt.figure(figsize=(10, 5))
+        x_values = np.linspace(1, 360, num=359) # 360 Werte zwischen 0 und 360
+        plt.plot(x_values, calc.residual_error, label='Residual Error', color='b')
+        plt.xlabel('phi')
+        plt.ylabel('Residual Error')
+        #plt.title('Residual Error über den Bereich 0 bis 360')
+        plt.grid(True)
+        #plt.legend()
+        plt.savefig("src/ErrorPlot.png")
+        print("Error plot saved as 'src/ErrorPlot.png'")
+
     def __str__(self):
         return f"Calculation: dots:{self._dots}\nconnections:{self._connections}\nfixeddots:{self._fixeddots}\nswivels:{self._swivels}\n"
 
@@ -506,4 +527,8 @@ if __name__ == "__main__":
     calc.trajectory()
     calc.save_csv("test.csv", "e")
     calc.animate_plot("e")
+    calc.error_plot()
+
+
+
     
