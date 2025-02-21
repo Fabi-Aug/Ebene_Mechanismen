@@ -5,18 +5,6 @@ translate([-28.0, -5.0,-1]) cylinder(h=2,r=2);
 color("red" )
 translate([28.0, -5.0,-1]) cylinder(h=2,r=2);
 color("blue")
-<<<<<<< HEAD
-translate([10.0, 35.0,-1]) cylinder(h=2,r=2);
-color("red")
-translate([-30, 0,-3]) cylinder(h=2,r=11.180339887498949);
-color("blue")
-translate([-25.0, 10.0,-1]) cylinder(h=2,r=2);
-module connection(p1, p2) {{dx = p2[0] - p1[0]; dy = p2[1] - p1[1]; length = sqrt(dx*dx + dy*dy); translate(p1) {{rotate([0, 0, atan2(dy, dx)]) {{translate([length/2, 0, 0]) cube([length, 2, 2], center=true); }}}}}}
-color("gray")
-connection([0.0, 0.0,0], [10.0, 35.0,0]);
-color("gray")
-connection([10.0, 35.0,0], [-25.0, 10.0,0]);
-=======
 translate([-16.0, 23.0,-1]) cylinder(h=2,r=2);
 color("blue")
 translate([-54.0, 6.5,-1]) cylinder(h=2,r=2);
@@ -81,4 +69,3 @@ color("gray")
 connection([33.46172075954302, -65.34817635403964,0], [46.18649895184087, -29.864658772536796,0]);
 color("gray")
 connection([46.18649895184087, -29.864658772536796,0], [28.0, -5.0,0]);
->>>>>>> 9eb5b52a040a7d928a3fbb45f08368470f3ce4b8

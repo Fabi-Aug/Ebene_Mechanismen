@@ -514,9 +514,9 @@ class Calculation:
 
 if __name__ == "__main__":
 
-    #Database.load_mechanism("strandbeest.json")
+    Database.load_mechanism("strandbeest.json")
     #Database.load_mechanism("mechanism.json")
-    Database.load_mechanism("two_legged_strandbeest.json")
+    #Database.load_mechanism("two_legged_strandbeest.json")
 
     calc = Calculation()
     
