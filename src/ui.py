@@ -141,70 +141,56 @@ elif tab == "Plot":
     st.subheader("Mechanism Visualization")
     load, prev = st.columns(2)    
     with load:
-        if "delete_file" not in st.session_state:
-            st.session_state["delete_file"] = "None"
-        data_source_options = [f for f in os.listdir("src") if f.endswith(".json") and not f == st.session_state["delete_file"]]
-        data_source = st.selectbox("Select data source:", data_source_options)
+        #if "delete_file" not in st.session_state:
+        #    st.session_state["delete_file"] = "None"
         
+        # Modified data source selection with an "Upload file" option
+        data_source_options = [f for f in os.listdir("src") if f.endswith(".json")] + ["Upload file"]
+        data_source = st.selectbox("Select data source:", data_source_options)
+
+        if data_source == "Upload file":
+            uploaded_file = st.file_uploader("Upload a JSON file", type=["json"])
+            if uploaded_file is not None:
+                # Save the uploaded file into the "src" directory
+                file_path = os.path.join("src", uploaded_file.name)
+                with open(file_path, "wb") as f:
+                    f.write(uploaded_file.getbuffer())
+                st.success(f"Uploaded file saved as {uploaded_file.name}")
+                data_source = uploaded_file.name  # Update data_source to the new file's name
+            else:
+                st.info("Awaiting file upload.")
+                st.stop()  # Stop execution until a file is uploaded
+
         # Reset calculation flags only if a new file is selected
         if "current_file" not in st.session_state or st.session_state["current_file"] != data_source:
             st.session_state["current_file"] = data_source
             st.session_state["calculation"] = False
             st.session_state["calc_done"] = False
-        
-        json_file_path = f"{data_source}"
+
+        json_file_path = data_source
         clear_all_inst()
         Database.load_mechanism(json_file_path)
         st.success(f"Mechanism loaded from {json_file_path}")
         st.session_state["calc"] = Calculation()
-        
+
+        # (Rest of your code remains unchanged)
         point_ids_list = st.session_state["calc"].get_dot_ids()  # IDs abrufen
         if point_ids_list:
             p_c = st.selectbox("Select a point for plotting", point_ids_list, key="plot_point")
         else:
             st.warning("No valid point IDs found in calculation data.")
-        
+
         if "calculation" not in st.session_state:
             st.session_state["calculation"] = False
-        
-        calculate, delete = st.columns(2)
-        with calculate:
-            if st.button("Calculate"):
-                st.session_state["calculation"] = True
-        #with delete:
-        #    if data_source not in ["strandbeest.json", "builded_mechanism.json"]:
-        #        delete_button = st.button("Delete")
-        #       
-        #        if delete_button:
-        #            file_path = os.path.join("src", data_source)
-        #
-        #            try:
-        #                # Unload any loaded mechanism to prevent file locks
-        #                clear_all_inst()
-        #
-        #                # Store the file path in session state before deletion
-        #                st.session_state["delete_file"] = file_path
-        #
-        #                # Ensure the file exists before deleting
-        #                if os.path.exists(st.session_state["delete_file"]):
-        #                    os.remove(st.session_state["delete_file"])
-        #                    st.success(f"Deleted {os.path.basename(st.session_state['delete_file'])}")
-#
-        #                    # Reset state and refresh UI
-        #                    st.session_state["delete_file"] = None
-        #                    st.rerun()
-        #                else:
-        #                    st.error("File not found. It might have been deleted already.")
-#
-        #            except PermissionError:
-        #                st.error(f"File '{os.path.basename(st.session_state['delete_file'])}' is currently in use. Close any applications using it and try again.")
-        #            except FileNotFoundError:
-        #                st.error("File not found. It might have been deleted already.")
+
+
+        if st.button("Calculate"):
+            st.session_state["calculation"] = True
 
     with prev:
         st.session_state["calc"].static_plot()
-        st.image("src/StaticPlot.png", caption="Mechanism Preview", use_container_width=True)
-        
+        st.image("src/StaticPlot.png", caption=f"{data_source} Preview", use_container_width=True)
+
     if st.session_state["calculation"]:
         file_name = os.path.splitext(data_source)[0]
         st.subheader(file_name)
@@ -220,7 +206,7 @@ elif tab == "Plot":
             st.session_state["calc_done"] = True
         
         st.image("src/Animation.gif", caption="Mechanism Animation", use_container_width=True)
-       
+    
         st.subheader("Download from Mechanism " + file_name)
         options = ["Select file to download", ["Bill of Materials", "CSV", "CAD Modell", "Animation", f"{file_name} Database", "All Data as Zip"]]
         selected_option = st.selectbox("Select file to download", options[1])
@@ -256,7 +242,7 @@ elif tab == "Plot":
                     file_name=f"{file_name}_animation.gif",
                     mime="image/gif"
                 )
-        elif selected_option == f"{file_name} Database":
+        elif selected_option == f"{file_name} Database  ":
             with open(f"src/{file_name}.json", "rb") as json_file:
                 st.download_button(
                     label=f"Download",
@@ -288,4 +274,3 @@ elif tab == "Plot":
                 file_name=zip_filename,
                 mime="application/zip"
             )
-                        
