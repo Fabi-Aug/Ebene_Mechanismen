@@ -270,7 +270,7 @@ Bisher wurden folgende Erweiterungen implementiert:
   
 
 - **Report-Tab**
-  - im Report-Tab findet sich eine zusammenfassung aller erstellten Dateien und der Berechnung und deren Auswertung
+  - im Report-Tab findet sich eine zusammenfassung aller erstellten Dateien und der Berechnung, deren Auswertung und einer Fehleranalyse.
 
 
 
