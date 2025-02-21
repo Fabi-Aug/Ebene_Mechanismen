@@ -34,11 +34,15 @@ Dieses Projekt befasst sich mit der Simulation ebener Mechanismen. Die methodisc
    ```bash
    git clone <repository-url>
    ```
-2. **Abhängigkeiten installieren:**  
+2. **Virtual environemt erstellen:**  
+   ```bash
+   python -m venv venv
+   ```
+3. **Abhängigkeiten installieren:**  
    ```bash
    pip install -r requirements.txt
    ```
-3. **Projekt starten:**  
+4. **Projekt starten:**  
    ```bash
    streamlit run ui.py
    ```
@@ -72,30 +76,98 @@ Bisher wurden folgende Erweiterungen implementiert:
 
 - **Auszeichnungssprache mittels JSON-Datenbank**
   Implementierung einer JSON-Datenbank mittels TinyDB zur Speicherung und zum Laden von Mechanismen. Zusätzlich können externe Mechanismen importiert und in der Simulation verwendet werden. Bereits erstellte Mechanismen können heruntergeladen werden. 
+  - **Aufbau der Datenbank:**
+  ```json
+  {
+      "fixeddot": {
+          "1": {
+              "x": 0,
+              "y": 0,
+              "id": "d0"
+          }
+      },
+      "movabledot": {
+          "1": {
+              "x": 10,
+              "y": 35,
+              "id": "d1"
+          }
+      },
+      "swivel": {
+          "1": {
+              "x_m": -30,
+              "y_m": 0,
+              "r": 11.180339887498949,
+              "phi": 1.1071487177940904,
+              "id": "s1"
+          }
+      },
+      "connectionlinks": {
+          "1": {
+              "dot1": {
+                  "x": 0,
+                  "y": 0,
+                  "id": "d0"
+              },
+              "dot2": {
+                  "x": 10,
+                  "y": 35,
+                  "id": "d1"
+              }
+          },
+          "2": {
+              "dot1": {
+                  "x": 10,
+                  "y": 35,
+                  "id": "d1"
+              },
+              "dot2": {
+                  "x_m": -30,
+                  "y_m": 0,
+                  "r": 11.180339887498949,
+                  "phi": 1.1071487177940904,
+                  "id": "s1"
+              }
+          }
+      }
+  }
+  ```
 
 ## Walkthrough
-- Variante A: Punkte und Verbindungen im build-Tab händisch erstellen
-  - Mechanismus definieren (bild)
-  - live-preview wird autoamtisch erstellt (bild)
+- **Variante A:** Punkte und Verbindungen im Build-Tab händisch erstellen
+  - Mechanismus definieren 
+  - live-preview wird autoamtisch erstellt 
   - Freiheitsgrade können, müssen aber nicht, händisch überprüft werden 
+  ![Build-Tab](doc/Build_tab.png)
   - der erstellte Mechanismus muss für die Berechnung gespeichert werden (entwerder Temporär oder als eigene Datenbank)
-  - in den plot-Tab wechseln und als data source den erstellten Mechanismus auswählen (temporäre Datei bzw. eigene Datenbank)
+  ![Build-Tab-Save](doc/Build_tab_save.png)
+  - in den Plot-Tab wechseln und als data source den erstellten Mechanismus auswählen (temporäre Datei bzw. eigene Datenbank)
+  ![Plot-Tab](doc/Plot_tab_select.png)
   - Punkt auswählen dessen Bahnkurve zusätzlich zum Bewegungsablauf geplottet werden soll
   - mit *calculate* die Berechnung starten (Berechnung und erstellen der Simulation kann einige Sekunden dauern)
   - im Download-Bereich unter der Visulaisierung können alle erstellen Dateien (Stückliste, CSV-Bahnkurve, CAD-Modell, Animation, Datenbank) heruntergeladen werden
+  ![Plot-Tab-Download](doc/Plot_tab_download.png)	
 
-- Variante B: Mechanismus importieren
+- **Variante B:** Mechanismus importieren
   - plot-Tab öffnen
-  - bei der Auswahl der data source eine vorhandene Datenbank auswählen bzw. eine eigene hochladen
+  - bei der Auswahl der data source eine vorhandene Datenbank auswählen bzw. über den Upload eigene hochladen
+  ![Plot-Tab-Upload](doc/Plot_tab_upload.png)
+  - Punkt auswählen dessen Bahnkurve zusätzlich zum Bewegungsablauf geplottet werden soll
+  - mit *calculate* die Berechnung starten (Berechnung und erstellen der Simulation kann einige Sekunden dauern)
+  - im Download-Bereich unter der Visulaisierung können alle erstellen Dateien (Stückliste, CSV-Bahnkurve, CAD-Modell, Animation, Datenbank) heruntergeladen werden
+  
+
+- **Report-Tab**
+  - im Report-Tab findet sich eine zusammenfassung aller erstellten Dateien und der Berechnung und deren Auswertung
 
 
 
 ## Projektstruktur
 ```
-├── README.md
-├── requirements.txt
-├── main.py
-
+├── README.md 
+├── requirements.txt 
+├── doc/  # Dokumentationen und Beispielbilder
+├── src/  # Quellcode
 ```
 
 ## Weiterführende Informationen

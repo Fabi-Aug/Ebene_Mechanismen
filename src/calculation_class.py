@@ -499,7 +499,7 @@ class Calculation:
     def error_plot(self):
         plt.figure(figsize=(10, 5))
         x_values = np.linspace(1, 360, num=359) # 360 Werte zwischen 0 und 360
-        plt.plot(x_values, calc.residual_error, label='Residual Error', color='b')
+        plt.plot(x_values, self.residual_error, label='Residual Error', color='b')
         plt.xlabel('phi')
         plt.ylabel('Residual Error')
         #plt.title('Residual Error über den Bereich 0 bis 360')
