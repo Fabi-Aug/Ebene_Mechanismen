@@ -48,7 +48,104 @@ Dieses Projekt befasst sich mit der Simulation ebener Mechanismen. Die methodisc
    ```
 
 ## UML-Diagramme
-*Platzhalter für UML-Diagramme,  die Klassenstruktur und die Beziehungen*
+- **Aufbau der Klassenstruktur:**
+  ```mermaid
+    classDiagram
+    class dot {
+        - _x
+        - _y
+        - id
+        - x_values
+        - y_values
+        - _instances
+        + set_coordinates(x, y)
+        + get_coordinates()
+        + get_self()
+        + get_instances()
+        + get_all_instances()
+        + clear_instances()
+    }
+
+    class fixeddot {
+        + to_dict()
+        + create_instance()
+        + overwrite_all_instances()
+        + get_instances()
+        + clear_instances()
+    }
+
+    class movabledot {
+        + to_dict()
+        + create_instance()
+        + overwrite_all_instances()
+        + get_instances()
+        + clear_instances()
+    }
+
+    class swivel {
+        - x_m
+        - y_m
+        - _r
+        - _phi
+        + set_phi(phi)
+        + to_dict()
+        + create_instance()
+        + overwrite_all_instances()
+        + get_instances()
+        + clear_instances()
+    }
+
+    class connectionlinks {
+        - dot1
+        - dot2
+        - _instances
+        + calc_length()
+        + get_instances()
+        + create_instance()
+        + overwrite_all_instances()
+        + get_dot_by_id()
+        + clear_instances()
+        + to_dict()
+    }
+
+    class Database {
+        - db
+        + save_mechanism(path)
+        + load_mechanism(path)
+    }
+
+    dot <|-- fixeddot
+    dot <|-- movabledot
+    dot <|-- swivel
+    connectionlinks --> dot : "connects"
+    Database --> fixeddot : "manages"
+    Database --> movabledot : "manages"
+    Database --> swivel : "manages"
+    Database --> connectionlinks : "manages"
+  ```
+
+
+- **Aufbau der Berechnungsklasse:**  
+  ```mermaid
+     classDiagram
+    class Calculation {
+        - _dots
+        - movabledots
+        - _connections
+        - _fixeddots
+        - _swivels
+        - _n
+        - _m
+        + check_dof()
+        + calculate(phi, phi2, params, l_c)
+        + optimizer(phi, phi2, l_c)
+        + trajectory()
+        + save_csv(path, id)
+        + static_plot()
+        + animate_plot(id)
+        + create_bom()
+    }
+  ```
 
 
 ## Proof of Concept: Berechnung
