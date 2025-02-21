@@ -7,9 +7,9 @@ class fixeddot(dot):
     A class that represents a fixed point (singleton).
     """
     def __init__(self, x: float, y: float, id: str):
-        if not hasattr(self, "_initialized"):
+        #if not hasattr(self, "_initialized"):
             super().__init__(x, y, id)
-            self._initialized = True
+            #self._initialized = True
 
     def to_dict(self):
         return {

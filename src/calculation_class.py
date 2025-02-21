@@ -33,9 +33,12 @@ class Calculation:
         self._m = len(self._connections)
 
     def check_dof(self):
-        f = 2 * self._n - 2 - 2 - self._m
-        # print(f"Degrees of freedom: {f}")
-        return f
+        N = len(self._dots)  # Alle Punkte (Fixpunkte + bewegliche Punkte)
+        J = len(self._fixeddots) + len(self._swivels)  # Fixpunkte + Swivels
+        M = len(self._connections)  # Anzahl der Verbindungen
+
+        F = 2* N - 2 * J - M  # Grübler-Gleichung für ebene Systeme
+        return F
 
     def calculate(self, phi, phi2, params,l_c):
         for instance in self._swivels:
@@ -339,6 +342,7 @@ class Calculation:
             length = connection.calc_length()
             if length in connection_lengths:
                 connection_lengths[length]["Quantity"] += 1
+                connection_lengths[length]["Object"] += f", {connection.dot1.id}-{connection.dot2.id}"
             else:
                 connection_lengths[length] = {
                     "Object": f"{connection.dot1.id}-{connection.dot2.id}",
@@ -488,20 +492,12 @@ class Calculation:
 
 
 if __name__ == "__main__":
-#    d0 = fixeddot(0, 0, "d0")
-#    d1 = movabledot(10, 35, "d1")
-#
-#    s1 = swivel(-30, 0, (5**2 + 10**2) ** 0.5, math.atan(10 / 5), "s1")
-#    c1 = connectionlinks(d0, d1)
-#    c2 = connectionlinks(d1, s1)
-    #Database.save_mechanism("mechanism.json")
 
-    Database.load_mechanism("strandbeest.json")
+    #Database.load_mechanism("strandbeest.json")
     #Database.load_mechanism("mechanism.json")
+    Database.load_mechanism("two_legged_strandbeest.json")
 
     calc = Calculation()
-
-#    print(calc.get_dot_ids())
     
     calc.create_bom()
     calc.static_plot()
