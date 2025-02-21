@@ -3,8 +3,8 @@
 ## Einleitung
 - **Projektname:** Ebene_Mechanismen
 - **Projekttyp:** Simulation
-- **Autor(en):** Fabian Augschöll, Manuel Hofer
-- **Datum:** 05.02.2025
+- **Autoren:** Fabian Augschöll, Manuel Hofer
+- **Datum:** 27.02.2025
 - **Kurzbeschreibung:** Simulation ebener Mechanismen zur Berechnung von Längenfehlern und Visualisierung der kinematischen Bewegung.
 - **Mindestzielsetzung:** 
     - Implementierung einer Python-Anwendung mit Streamlit-Web-UI
@@ -46,6 +46,14 @@ Dieses Projekt befasst sich mit der Simulation ebener Mechanismen. Die methodisc
    ```bash
    streamlit run ui.py
    ```
+
+## Projektstruktur
+```
+├── README.md 
+├── requirements.txt 
+├── doc/  # Dokumentationen und Beispielbilder
+├── src/  # Quellcode
+```
 
 ## UML-Diagramme
 - **Aufbau der Klassenstruktur:**
@@ -159,17 +167,24 @@ Dieses Projekt befasst sich mit der Simulation ebener Mechanismen. Die methodisc
 
 ## Erweiterungen
 Bisher wurden folgende Erweiterungen implementiert:
-- **Animation als GIF speichern:**  
-  Die Simulation kann als animierte GIF exportiert werden, um Bewegungsabläufe und Fehlerverläufe zu dokumentieren.
+- **Animation als GIF exportieren:**  
+  Die Simulation kann als animierte GIF exportiert werden, um Bewegungsabläufe und Fehlerverläufe zu dokumentieren.  
+  *siehe [Proof of Concept](#proof-of-concept-berechnung)*
   
 - **Stückliste als PDF:**  
-  Eine automatische Generierung einer Stückliste im PDF-Format, die alle relevanten Komponenten des Mechanismus (Gestänge, Antriebe, Gelenke) auflistet. 
+  Eine automatische Generierung einer Stückliste im PDF-Format, die alle relevanten Komponenten des Mechanismus (Gestänge, Antriebe, Gelenke) auflistet.  
+  *Beispiel anhand vom "two-legged-Strandbeest"*
+  ![Stückliste](doc/PDF.png)
   
 - **3D-Volumenmodell mittels OpenSCAD:**  
-  Erstellung eines 3D-Modells des Mechanismus, das in OpenSCAD weiterverarbeitet werden kann, um volumetrische Analysen und Visualisierungen zu ermöglichen.
+  Erstellung eines 3D-Modells des Mechanismus, das in OpenSCAD weiterverarbeitet werden kann, um volumetrische Analysen und Visualisierungen zu ermöglichen.  
+  *Beispiel anhand vom "two-legged-Strandbeest"*
+  ![CAD](doc/CAD_SS.png)
+
 
 - **Erweiterung auf mehrere Fixpunkte:**
-  Die Simulation unterstützt nun mehrere Fixpunkte, um die Bewegung des Mechanismus in verschiedenen Konfigurationen zu analysieren. Beispiel: two-legged-Strandbeest
+  Die Simulation unterstützt nun mehrere Fixpunkte, um die Bewegung des Mechanismus in verschiedenen Konfigurationen zu analysieren.  *Beispiel anhand vom "two-legged-Strandbeest"*
+  ![two_legged_strandbeest](doc/two_legged_strandbeest.gif)
 
 - **Auszeichnungssprache mittels JSON-Datenbank**
   Implementierung einer JSON-Datenbank mittels TinyDB zur Speicherung und zum Laden von Mechanismen. Zusätzlich können externe Mechanismen importiert und in der Simulation verwendet werden. Bereits erstellte Mechanismen können heruntergeladen werden. 
@@ -242,7 +257,7 @@ Bisher wurden folgende Erweiterungen implementiert:
   ![Plot-Tab](doc/Plot_tab_select.png)
   - Punkt auswählen dessen Bahnkurve zusätzlich zum Bewegungsablauf geplottet werden soll
   - mit *calculate* die Berechnung starten (Berechnung und erstellen der Simulation kann einige Sekunden dauern)
-  - im Download-Bereich unter der Visulaisierung können alle erstellen Dateien (Stückliste, CSV-Bahnkurve, CAD-Modell, Animation, Datenbank) heruntergeladen werden
+  - im Download-Bereich unter der Visulaisierung können alle erstellen Dateien (Stückliste, CSV-Bahnkurve, CAD-Modell, Animation, Datenbank, Bahnkurve als png) heruntergeladen werden
   ![Plot-Tab-Download](doc/Plot_tab_download.png)	
 
 - **Variante B:** Mechanismus importieren
@@ -251,7 +266,7 @@ Bisher wurden folgende Erweiterungen implementiert:
   ![Plot-Tab-Upload](doc/Plot_tab_upload.png)
   - Punkt auswählen dessen Bahnkurve zusätzlich zum Bewegungsablauf geplottet werden soll
   - mit *calculate* die Berechnung starten (Berechnung und erstellen der Simulation kann einige Sekunden dauern)
-  - im Download-Bereich unter der Visulaisierung können alle erstellen Dateien (Stückliste, CSV-Bahnkurve, CAD-Modell, Animation, Datenbank) heruntergeladen werden
+  - im Download-Bereich unter der Visulaisierung können alle erstellen Dateien (Stückliste, CSV-Bahnkurve, CAD-Modell, Animation, Datenbank, Bahnkurve als png) heruntergeladen werden
   
 
 - **Report-Tab**
@@ -259,13 +274,7 @@ Bisher wurden folgende Erweiterungen implementiert:
 
 
 
-## Projektstruktur
-```
-├── README.md 
-├── requirements.txt 
-├── doc/  # Dokumentationen und Beispielbilder
-├── src/  # Quellcode
-```
+
 
 ## Weiterführende Informationen
 *Hier können weiterführende Links, Literaturhinweise und zusätzliche Dokumentationen ergänzt werden, um einen tieferen Einblick in die Methodik und die zugrunde liegenden mathematischen Modelle zu geben.*
