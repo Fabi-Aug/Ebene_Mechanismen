@@ -34,3 +34,6 @@ class movabledot(dot):
     def clear_instances(cls):
         """Clear all instances of movabledot."""
         cls._instances.clear()
+    
+    def __str__(self):
+        return f"Movable Point at ({self._x:.2f}, {self._y:.2f}) with id = {self.id})"

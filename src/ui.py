@@ -119,8 +119,8 @@ if tab == "Build":
         
         if st.button("Temporarily Save"):
             if st.session_state["calc"].check_dof() == 0:
-                Database.save_mechanism("builded_mechanism.json")
-                st.success("Saved under builded_mechanism.json")
+                Database.save_mechanism("built_mechanism.json")
+                st.success("Saved under built_mechanism.json")
             else:
                 st.error("Cannot save, mechanism is kinematically undetermined")
     
@@ -200,7 +200,7 @@ elif tab == "Plot":
         st.subheader(file_name)
         
         # Only perform expensive calculations if they haven't been done already.
-        if not st.session_state.get("calc_done", False):
+        if not st.session_state.get("calc_done",False):
             st.session_state["calc"] = Calculation()
             st.session_state["calc"].create_bom()
             st.session_state["calc"].generate_openscad()
@@ -212,7 +212,7 @@ elif tab == "Plot":
         st.image("src/Animation.gif", caption="Mechanism Animation", use_container_width=True)
     
         st.subheader("Download from Mechanism " + file_name)
-        options = ["Select file to download", ["Bill of Materials", "CSV", "CAD Modell", "Animation", f"{file_name} Database", "All Data as Zip"]]
+        options = ["Select file to download", ["Bill of Materials", "Trajectory CSV", "CAD Modell", "Animation",  "Trajectory Plot", f"{file_name} Database", "All Data as Zip"]]
         selected_option = st.selectbox("Select file to download", options[1])
         if selected_option == "Bill of Materials":
             with open("src/bom.pdf", "rb") as pdf_file:
@@ -222,7 +222,7 @@ elif tab == "Plot":
                     file_name=f"{file_name}_bom.pdf", 
                     mime="application/pdf"
                 )
-        elif selected_option == "CSV":
+        elif selected_option == "Trajectory CSV":
             with open(f"src/mechanism.csv", "rb") as csv_file:
                 st.download_button(
                     label="Download",
@@ -246,6 +246,14 @@ elif tab == "Plot":
                     file_name=f"{file_name}_animation.gif",
                     mime="image/gif"
                 )
+        elif selected_option == "Trajectory Plot":
+            with open("src/Animation_last_frame.png", "rb") as plot_file:
+                st.download_button(
+                    label="Download",
+                    data=plot_file,
+                    file_name=f"{file_name}_trajectory_plot.png",
+                    mime="image/png"
+                )
         elif selected_option == f"{file_name} Database":
             with open(f"src/{file_name}.json", "rb") as json_file:
                 st.download_button(
@@ -262,6 +270,7 @@ elif tab == "Plot":
                 # Mapping: disk file → downloaded (connected) file name
                 files_mapping = {
                     "Animation": ("Animation.gif", f"{file_name}_animation.gif"),
+                    "Trajectory Plot": ("Animation_last_frame.png", f"{file_name}_trajectory_plot.png"),
                     "BOM": ("bom.pdf", f"{file_name}_bom.pdf"),
                     "CSV": (f"mechanism.csv", f"{file_name}.csv"),
                     "Database": (f"{file_name}.json", f"{file_name}.json"),
@@ -279,14 +288,34 @@ elif tab == "Plot":
                 mime="application/zip"
             )
 elif tab == "Report":
-    st.subheader("Residual Error")
-    st.session_state["calc"] = Calculation()
-    #st.session_state["calc"].error_plot()
-    #st.image("src/ErrorPlot.png", caption="Residual Error Plot", use_container_width=True)
-    st.subheader("Trajectory")
-    #st.session_state["calc"].trajectory_plot() #achtung funktionsname möglicherweise falsch
-    #st.image("src/Animation_last_frame.png", caption="Trajectory Plot", use_container_width=True)
+    if "calculation" not in st.session_state:
+        st.session_state["calculation"] = False
+    
     if st.session_state["calculation"]:
+        
+        st.subheader("Points")
+        st.write("The following table shows the points of the mechanism.")
+        # Combine the current instances from all point types
+        points = fixeddot.get_instances() + swivel.get_instances() + movabledot.get_instances()
+        points_df = pd.DataFrame(points)
+        points_df.columns = ["Points"]
+        st.dataframe(points_df)  # Use st.table(points_df) if you prefer a static table
+
+        st.subheader("Connections")
+        st.write("The following table shows the connections between the points.")
+        connections = connectionlinks.get_instances()
+        connections_df = pd.DataFrame(connections)
+        connections_df.columns = ["Connections"]
+        st.dataframe(connections_df)
+
+        st.subheader("Residual Error")
+        st.image("src/ErrorPlot.png", caption="Residual Error Plot", use_container_width=True)
+        st.write("The residual error plot shows the error between the calculated and the desired lengths of the connections for 360 degree.")
+        st.subheader("Trajectory")
+        st.image("src/Animation_last_frame.png", caption="Trajectory Plot", use_container_width=True)
         st.write(f"The trajectory plot shows the mechanism({st.session_state["file_name"]}) path of the selected point {st.session_state["p_c"]}.")
     
+    else:
+        st.warning("Please calculate the mechanism first.")
+        st.stop()
     

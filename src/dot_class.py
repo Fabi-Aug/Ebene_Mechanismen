@@ -52,7 +52,7 @@ class dot:
         cls._instances.clear()
 
     def __str__(self):
-        return f"({self._x}, {self._y}, id={self.id})"
+        return f"({self._x:.2f}, {self._y:.2f}, id={self.id})"
 
     def __repr__(self):
         return self.__str__()

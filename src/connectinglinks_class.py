@@ -53,7 +53,7 @@ class connectionlinks:
         }
 
     def __str__(self):
-        return f"Link({self.dot1}, {self.dot2})"
+        return f"Link between ({self.dot1} and {self.dot2})"
 
     def __repr__(self):
         return self.__str__()
