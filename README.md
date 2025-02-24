@@ -189,7 +189,8 @@ Bisher wurden folgende Erweiterungen implementiert:
 
 - **Einfügen eines Geschwindigkeitsvektors:**
   Der Geschwindigkeitsvektor des gewählten Punktes für die Bahnkuve wird in der Animation visuell dargestellt. Um die Darstellung zu verbessern wurde der Vektor mit dem Faktor 50 multipliziert.   
-  *Beispiel anhand vom "Strandbeest"*
+  *Beispiel anhand vom "Strandbeest"*  
+
   ![two_legged_strandbeest](doc/Strandbeest_v_vec.gif)
 
 - **Report**
@@ -275,7 +276,8 @@ Bisher wurden folgende Erweiterungen implementiert:
   ![Plot-Tab](doc/Plot_tab_select.png)
   - Punkt auswählen dessen Bahnkurve zusätzlich zum Bewegungsablauf geplottet werden soll
   - mit *calculate* die Berechnung starten (Berechnung und erstellen der Simulation kann einige Sekunden dauern)
-  - im Download-Bereich unter der Visulaisierung können alle erstellen Dateien (Stückliste, CSV-Bahnkurve, CAD-Modell, Animation, Datenbank, Bahnkurve als png) heruntergeladen werden
+  - im Download-Bereich unter der Visulaisierung können alle erstellen Dateien (Stückliste, CSV-Bahnkurve, CAD-Modell, Animation, Datenbank, Bahnkurve als png) heruntergeladen werden  
+  
   ![Plot-Tab-Download](doc/Plot_tab_download.png)	
 
 - **Variante B:** Mechanismus importieren
