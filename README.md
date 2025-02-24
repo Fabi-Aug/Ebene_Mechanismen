@@ -288,11 +288,13 @@ Bisher wurden folgende Erweiterungen implementiert:
   
 
 - **Report-Tab**
-  - Im Report-Tab befindet sich eine kurze Zusammenfassung des Mechanismus. Dort werden alle wichtigen Punkte und Verbindungen zusammengefasst sowie der berechnete Freiheitsgrad, die Längenfehler und die Bahnkurve des ausgewählten Punktes dargestellt.
+  - Im „Report“-Tab befindet sich eine kompakte Zusammenfassung des Mechanismus. Dort werden alle wichtigen Punkte und Verbindungen aufgeführt sowie der berechnete Freiheitsgrad, die Längenfehler und die Bahnkurve des ausgewählten Punktes dargestellt. Zusätzlich enthält der Bericht einen Geschwindigkeitsplot.
     - Der Fehlerplot zeigt die Längenabweichungen der Verbindungen in Abhängigkeit vom Drehwinkel.
     ![Residual Error](doc/Residual_error.png)
     - Die Bahnkurve veranschaulicht die Bewegung des ausgewählten Punktes über den gesamten Drehwinkelbereich.
     ![Trajectory](doc/Trajectory.png)
+    - Der Geschwindigkeitsplot zeigt die Geschwindigkeit des ausgewählten Punktes über den gesamten Drehwinkelbereich.
+    ![Velocity](doc/Velocity.png)
 
 
 
