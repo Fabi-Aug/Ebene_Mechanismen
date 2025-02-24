@@ -393,7 +393,7 @@ class Calculation:
             scad_code.append(f"translate([{x}, {y},-1]) cylinder(h=2,r=2);")
 
         scad_code.append(
-            "module connection(p1, p2) {{dx = p2[0] - p1[0]; dy = p2[1] - p1[1]; length = sqrt(dx*dx + dy*dy); translate(p1) {{rotate([0, 0, atan2(dy, dx)]) {{translate([length/2, 0, 0]) cube([length, 2, 2], center=true); }}}}}}"
+            "module connection(p1, p2) {{dx = p2[0] - p1[0]; dy = p2[1] - p1[1]; length = sqrt(dx*dx + dy*dy); translate(p1) {{rotate([0, 0, atan2(dy, dx)]) {{translate([length/2, 0, 0]) cube([length, 1.8, 1.8], center=true); }}}}}}"
         )
 
         for connection in self._connections:
