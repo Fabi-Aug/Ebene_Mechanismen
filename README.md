@@ -183,8 +183,26 @@ Bisher wurden folgende Erweiterungen implementiert:
 
 
 - **Erweiterung auf mehrere Fixpunkte:**
-  Die Simulation unterstützt nun mehrere Fixpunkte, um die Bewegung des Mechanismus in verschiedenen Konfigurationen zu analysieren.  *Beispiel anhand vom "two-legged-Strandbeest"*
+  Die Simulation unterstützt nun mehrere Fixpunkte, um die Bewegung des Mechanismus in verschiedenen Konfigurationen zu analysieren.  
+  *Beispiel anhand vom "two-legged-Strandbeest"*
   ![two_legged_strandbeest](doc/two_legged_strandbeest_animation.gif)
+
+- **Einfügen eines Geschwindigkeitsvektors:**
+  Der Geschwindigkeitsvektor des gewählten Punktes für die Bahnkuve wird in der Animation visuell dargestellt. Um die Darstellung zu verbessern wurde der Vektor mit dem Faktor 50 multipliziert.   
+  *Beispiel anhand vom "Strandbeest"*
+  ![two_legged_strandbeest](doc/Strandbeest_v_vec.gif)
+
+- **Report**
+  Es wird eine Zusammenfassung der Berechnungsergebnisse angezeigt.   
+  *Weiteres siehe [Report](#Walkthrough)*
+
+- **Relativer Geschwindigkeitsplot**
+  Es wird ein Plot der relativen Geschwindigkeit des gewählten Punktes (bei konstanter Winkelgeschwindigkeit) über die Zeit erstellt.   
+  *Weiteres siehe [Report](#Walkthrough)*
+
+- **Fehlerplot**
+  Es wird ein Plot des Residual-Error vom Optimierungsvorgang über den Drehwinkel erstellt. Dieser Spiegelt die Längenabweichungen aller Verbindungen wieder.  
+  *Weiteres siehe [Report](#Walkthrough)*
 
 - **Auszeichnungssprache mittels JSON-Datenbank**
   Implementierung einer JSON-Datenbank mittels TinyDB zur Speicherung und zum Laden von Mechanismen. Zusätzlich können externe Mechanismen importiert und in der Simulation verwendet werden. Bereits erstellte Mechanismen können heruntergeladen werden. 
