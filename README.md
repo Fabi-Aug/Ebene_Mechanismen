@@ -270,14 +270,23 @@ Bisher wurden folgende Erweiterungen implementiert:
   
 
 - **Report-Tab**
-  - im Report-Tab findet sich eine zusammenfassung aller erstellten Dateien und der Berechnung, deren Auswertung und einer Fehleranalyse.
-
-
+  - Im Report-Tab befindet sich eine kurze Zusammenfassung des Mechanismus. Dort werden alle wichtigen Punkte und Verbindungen zusammengefasst sowie der berechnete Freiheitsgrad, die Längenfehler und die Bahnkurve des ausgewählten Punktes dargestellt.
+    - Der Fehlerplot zeigt die Längenabweichungen der Verbindungen in Abhängigkeit vom Drehwinkel.
+    ![Residual Error](doc/Residual_error.png)
+    - Die Bahnkurve veranschaulicht die Bewegung des ausgewählten Punktes über den gesamten Drehwinkelbereich.
+    ![Trajectory](doc/Trajectory.png)
 
 
 
 ## Weiterführende Informationen
-*Hier können weiterführende Links, Literaturhinweise und zusätzliche Dokumentationen ergänzt werden, um einen tieferen Einblick in die Methodik und die zugrunde liegenden mathematischen Modelle zu geben.*
+- **Quellen**
+  - [Streamlit](https://docs.streamlit.io) (UI)
+  - [SciPy-Optimize](https://docs.scipy.org/doc/scipy/reference/optimize.html) (Optimierung)
+  - [OpenSCAD](https://en.wikibooks.org/wiki/OpenSCAD_User_Manual) (CAD)
+  - [TinyDB](https://tinydb.readthedocs.io/en/latest/) (Datenbank)
+  - [Strandbeest](https://de.wikipedia.org/wiki/Strandbeest) (Projektbeispiel)
+- **Tools**
+  - [KI](https://copilot.github.com)    (Kommentare und Debugging)   
 
 
 

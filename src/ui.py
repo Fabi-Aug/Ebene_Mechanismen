@@ -308,12 +308,17 @@ elif tab == "Report":
         connections_df.columns = ["Connections"]
         st.dataframe(connections_df)
 
+        st.subheader("Degree of Freedom")
+        dof = st.session_state["calc"].check_dof()
+        st.write(f"The mechanism has {dof} degree of freedom.")
+        st.write("that means the mechanism is kinematically determined." if dof == 0 else "that means the mechanism is kinematically undetermined.")
+
         st.subheader("Residual Error")
         st.image("src/ErrorPlot.png", caption="Residual Error Plot", use_container_width=True)
         st.write("The residual error plot shows the error between the calculated and the desired lengths of the connections for 360 degree.")
         st.subheader("Trajectory")
         st.image("src/Animation_last_frame.png", caption="Trajectory Plot", use_container_width=True)
-        st.write(f"The trajectory plot shows the mechanism({st.session_state["file_name"]}) path of the selected point {st.session_state["p_c"]}.")
+        st.write(f"The trajectory plot shows the mechanism({st.session_state["file_name"]})of the selected point {st.session_state["p_c"]}.")
     
     else:
         st.warning("Please calculate the mechanism first.")
