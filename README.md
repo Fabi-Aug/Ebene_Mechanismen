@@ -15,6 +15,7 @@
     - Fehleroptimierung durch Minimierung der Längenabweichungen
     - Validierung der Mechanismen anhand vorgegebener Testfälle
     - Bereitstellung der Anwendung über Streamlit
+- **[Streamlit-App](https://ebenemechanismen-uxwzuc9rf7emuwj6gwzf9h.streamlit.app/)**
 
 ## Projektbeschreibung
 Dieses Projekt befasst sich mit der Simulation ebener Mechanismen. Die methodische Grundlage zur Berechnung der Längenfehler wurde durch den betreuenden Professor vorgegeben. Anstelle der empfohlenen Matrixrechnung wurde jedoch ein objektorientierter Ansatz gewählt, um eine strukturierte und modulare Implementierung zu gewährleisten. Diese Vorgehensweise erleichtert die Wartung und Erweiterung des Codes, wodurch zukünftige Anpassungen effizienter umgesetzt werden können. Zudem trägt dieser Ansatz zur besseren Lesbarkeit bei und ermöglicht eine klare Trennung der einzelnen funktionalen Komponenten der Simulation.
@@ -187,85 +188,86 @@ Bisher wurden folgende Erweiterungen implementiert:
   *Beispiel anhand vom "two-legged-Strandbeest"*
   ![two_legged_strandbeest](doc/two_legged_strandbeest_animation.gif)
 
-- **Einfügen eines Geschwindigkeitsvektors:**
-  Der Geschwindigkeitsvektor des gewählten Punktes für die Bahnkuve wird in der Animation visuell dargestellt. Um die Darstellung zu verbessern wurde der Vektor mit dem Faktor 50 multipliziert.   
+- **Einfügen eines Geschwindigkeitsvektors:**  
+Der Geschwindigkeitsvektor des gewählten Punktes für die Bahnkuve wird in der Animation visuell dargestellt. Um die Darstellung zu verbessern wurde der Vektor mit dem Faktor 50 multipliziert.   
   *Beispiel anhand vom "Strandbeest"*  
 
   ![two_legged_strandbeest](doc/Strandbeest_v_vec.gif)
 
-- **Report**
-  Es wird eine Zusammenfassung der Berechnungsergebnisse angezeigt.   
+- **Report:**  
+Es wird eine Zusammenfassung der Berechnungsergebnisse angezeigt.   
   *Weiteres siehe [Report](#Walkthrough)*
 
-- **Relativer Geschwindigkeitsplot**
-  Es wird ein Plot der relativen Geschwindigkeit des gewählten Punktes (bei konstanter Winkelgeschwindigkeit) über die Zeit erstellt.   
+- **Relativer Geschwindigkeitsplot:**  
+Es wird ein Plot der relativen Geschwindigkeit des gewählten Punktes (bei konstanter Winkelgeschwindigkeit) über die Zeit erstellt.   
   *Weiteres siehe [Report](#Walkthrough)*
 
-- **Fehlerplot**
-  Es wird ein Plot des Residual-Error vom Optimierungsvorgang über den Drehwinkel erstellt. Dieser Spiegelt die Längenabweichungen aller Verbindungen wieder.  
+- **Fehlerplot:**  
+Es wird ein Plot des Residual-Error vom Optimierungsvorgang über den Drehwinkel erstellt. Dieser Spiegelt die Längenabweichungen aller Verbindungen wieder.  
   *Weiteres siehe [Report](#Walkthrough)*
 
-- **Auszeichnungssprache mittels JSON-Datenbank**
-  Implementierung einer JSON-Datenbank mittels TinyDB zur Speicherung und zum Laden von Mechanismen. Zusätzlich können externe Mechanismen importiert und in der Simulation verwendet werden. Bereits erstellte Mechanismen können heruntergeladen werden. 
+- **Auszeichnungssprache mittels JSON-Datenbank:**  
+Implementierung einer JSON-Datenbank mittels TinyDB zur Speicherung und zum Laden von Mechanismen. Zusätzlich können externe Mechanismen importiert und in der Simulation verwendet werden. Bereits erstellte Mechanismen können heruntergeladen werden. 
   - **Aufbau der Datenbank:**
-  ```json
-  {
-      "fixeddot": {
-          "1": {
-              "x": 0,
-              "y": 0,
-              "id": "d0"
-          }
-      },
-      "movabledot": {
-          "1": {
-              "x": 10,
-              "y": 35,
-              "id": "d1"
-          }
-      },
-      "swivel": {
-          "1": {
-              "x_m": -30,
-              "y_m": 0,
-              "r": 11.180339887498949,
-              "phi": 1.1071487177940904,
-              "id": "s1"
-          }
-      },
-      "connectionlinks": {
-          "1": {
-              "dot1": {
-                  "x": 0,
-                  "y": 0,
-                  "id": "d0"
-              },
-              "dot2": {
-                  "x": 10,
-                  "y": 35,
-                  "id": "d1"
-              }
-          },
-          "2": {
-              "dot1": {
-                  "x": 10,
-                  "y": 35,
-                  "id": "d1"
-              },
-              "dot2": {
-                  "x_m": -30,
-                  "y_m": 0,
-                  "r": 11.180339887498949,
-                  "phi": 1.1071487177940904,
-                  "id": "s1"
-              }
-          }
-      }
-  }
-  ```
+    ```json
+    {
+        "fixeddot": {
+            "1": {
+                "x": 0,
+                "y": 0,
+                "id": "d0"
+            }
+        },
+        "movabledot": {
+            "1": {
+                "x": 10,
+                "y": 35,
+                "id": "d1"
+            }
+        },
+        "swivel": {
+            "1": {
+                "x_m": -30,
+                "y_m": 0,
+                "r": 11.180339887498949,
+                "phi": 1.1071487177940904,
+                "id": "s1"
+            }
+        },
+        "connectionlinks": {
+            "1": {
+                "dot1": {
+                    "x": 0,
+                    "y": 0,
+                    "id": "d0"
+                },
+                "dot2": {
+                    "x": 10,
+                    "y": 35,
+                    "id": "d1"
+                }
+            },
+            "2": {
+                "dot1": {
+                    "x": 10,
+                    "y": 35,
+                    "id": "d1"
+                },
+                "dot2": {
+                    "x_m": -30,
+                    "y_m": 0,
+                    "r": 11.180339887498949,
+                    "phi": 1.1071487177940904,
+                    "id": "s1"
+                }
+            }
+        }
+    }
+    ```
 
 ## Walkthrough
-- **Variante A:** Punkte und Verbindungen im Build-Tab händisch erstellen
+- **Variante A:**  
+Punkte und Verbindungen im Build-Tab händisch erstellen
   - Mechanismus definieren 
   - live-preview wird autoamtisch erstellt 
   - Freiheitsgrade können, müssen aber nicht, händisch überprüft werden 
@@ -280,7 +282,8 @@ Bisher wurden folgende Erweiterungen implementiert:
   
   ![Plot-Tab-Download](doc/Plot_tab_download.png)	
 
-- **Variante B:** Mechanismus importieren
+- **Variante B:**  
+Mechanismus importieren
   - plot-Tab öffnen
   - bei der Auswahl der data source eine vorhandene Datenbank auswählen bzw. über den Upload eigene hochladen
   ![Plot-Tab-Upload](doc/Plot_tab_upload.png)
@@ -289,8 +292,8 @@ Bisher wurden folgende Erweiterungen implementiert:
   - im Download-Bereich unter der Visulaisierung können alle erstellen Dateien (Stückliste, CSV-Bahnkurve, CAD-Modell, Animation, Datenbank, Bahnkurve als png) heruntergeladen werden
   
 
-- **Report-Tab**
-  - Im „Report“-Tab befindet sich eine kompakte Zusammenfassung des Mechanismus. Dort werden alle wichtigen Punkte und Verbindungen aufgeführt sowie der berechnete Freiheitsgrad, die Längenfehler und die Bahnkurve des ausgewählten Punktes dargestellt. Zusätzlich enthält der Bericht einen Geschwindigkeitsplot.
+- **Report-Tab:**  
+Im „Report“-Tab befindet sich eine kompakte Zusammenfassung des Mechanismus. Dort werden alle wichtigen Punkte und Verbindungen aufgeführt sowie der berechnete Freiheitsgrad, die Längenfehler und die Bahnkurve des ausgewählten Punktes dargestellt. Zusätzlich enthält der Bericht einen Geschwindigkeitsplot.
     - Der Fehlerplot zeigt die Längenabweichungen der Verbindungen in Abhängigkeit vom Drehwinkel.
     ![Residual Error](doc/Residual_error.png)
     - Die Bahnkurve veranschaulicht die Bewegung des ausgewählten Punktes über den gesamten Drehwinkelbereich.
@@ -301,13 +304,13 @@ Bisher wurden folgende Erweiterungen implementiert:
 
 
 ## Weiterführende Informationen
-- **Quellen**
+- **Quellen:**
   - [Streamlit](https://docs.streamlit.io) (UI)
   - [SciPy-Optimize](https://docs.scipy.org/doc/scipy/reference/optimize.html) (Optimierung)
   - [OpenSCAD](https://en.wikibooks.org/wiki/OpenSCAD_User_Manual) (CAD)
   - [TinyDB](https://tinydb.readthedocs.io/en/latest/) (Datenbank)
   - [Strandbeest](https://de.wikipedia.org/wiki/Strandbeest) (Projektbeispiel)
-- **Tools**
+- **Tools:**
   - [KI](https://copilot.github.com)    (Kommentare und Debugging)   
 
 
