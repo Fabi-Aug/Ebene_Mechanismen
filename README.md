@@ -183,8 +183,26 @@ Bisher wurden folgende Erweiterungen implementiert:
 
 
 - **Erweiterung auf mehrere Fixpunkte:**
-  Die Simulation unterstützt nun mehrere Fixpunkte, um die Bewegung des Mechanismus in verschiedenen Konfigurationen zu analysieren.  *Beispiel anhand vom "two-legged-Strandbeest"*
+  Die Simulation unterstützt nun mehrere Fixpunkte, um die Bewegung des Mechanismus in verschiedenen Konfigurationen zu analysieren.  
+  *Beispiel anhand vom "two-legged-Strandbeest"*
   ![two_legged_strandbeest](doc/two_legged_strandbeest_animation.gif)
+
+- **Einfügen eines Geschwindigkeitsvektors:**
+  Der Geschwindigkeitsvektor des gewählten Punktes für die Bahnkuve wird in der Animation visuell dargestellt. Um die Darstellung zu verbessern wurde der Vektor mit dem Faktor 50 multipliziert.   
+  *Beispiel anhand vom "Strandbeest"*
+  ![two_legged_strandbeest](doc/Strandbeest_v_vec.gif)
+
+- **Report**
+  Es wird eine Zusammenfassung der Berechnungsergebnisse angezeigt.   
+  *Weiteres siehe [Report](#Walkthrough)*
+
+- **Relativer Geschwindigkeitsplot**
+  Es wird ein Plot der relativen Geschwindigkeit des gewählten Punktes (bei konstanter Winkelgeschwindigkeit) über die Zeit erstellt.   
+  *Weiteres siehe [Report](#Walkthrough)*
+
+- **Fehlerplot**
+  Es wird ein Plot des Residual-Error vom Optimierungsvorgang über den Drehwinkel erstellt. Dieser Spiegelt die Längenabweichungen aller Verbindungen wieder.  
+  *Weiteres siehe [Report](#Walkthrough)*
 
 - **Auszeichnungssprache mittels JSON-Datenbank**
   Implementierung einer JSON-Datenbank mittels TinyDB zur Speicherung und zum Laden von Mechanismen. Zusätzlich können externe Mechanismen importiert und in der Simulation verwendet werden. Bereits erstellte Mechanismen können heruntergeladen werden. 
@@ -270,11 +288,13 @@ Bisher wurden folgende Erweiterungen implementiert:
   
 
 - **Report-Tab**
-  - Im Report-Tab befindet sich eine kurze Zusammenfassung des Mechanismus. Dort werden alle wichtigen Punkte und Verbindungen zusammengefasst sowie der berechnete Freiheitsgrad, die Längenfehler und die Bahnkurve des ausgewählten Punktes dargestellt.
+  - Im „Report“-Tab befindet sich eine kompakte Zusammenfassung des Mechanismus. Dort werden alle wichtigen Punkte und Verbindungen aufgeführt sowie der berechnete Freiheitsgrad, die Längenfehler und die Bahnkurve des ausgewählten Punktes dargestellt. Zusätzlich enthält der Bericht einen Geschwindigkeitsplot.
     - Der Fehlerplot zeigt die Längenabweichungen der Verbindungen in Abhängigkeit vom Drehwinkel.
     ![Residual Error](doc/Residual_error.png)
     - Die Bahnkurve veranschaulicht die Bewegung des ausgewählten Punktes über den gesamten Drehwinkelbereich.
     ![Trajectory](doc/Trajectory.png)
+    - Der Geschwindigkeitsplot zeigt die Geschwindigkeit des ausgewählten Punktes über den gesamten Drehwinkelbereich.
+    ![Velocity](doc/Velocity.png)
 
 
 
