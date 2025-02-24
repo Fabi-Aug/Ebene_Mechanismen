@@ -12,6 +12,7 @@ class dot:
         cls._instances = []  # Each subclass has its own instance list
 
     def __init__(self, x, y, id):
+        """ Initialize a dot with coordinates x, y and id. """
         self._x = x
         self._y = y
         self.id = id
@@ -21,22 +22,24 @@ class dot:
         self.__class__._instances.append(self)
 
     def set_coordinates(self, x: float, y: float):
+        """ Set the coordinates of the dot. """
         self._x = x
         self._y = y
 
     def get_coordinates(self) -> Tuple[float, float]:
+        """ Return the coordinates of the dot. """
         return (float(self._x), float(self._y))
     
     def get_self(self):
         return self
 
     @classmethod
-    def get_instances(cls):
+    def get_instances(cls)->list:
         """Return instances specific to this class (not including subclasses)."""
         return cls._instances
 
     @classmethod
-    def get_all_instances(cls):
+    def get_all_instances(cls)->list:
         """Return instances of cls and all its subclasses."""
         all_instances = list(cls._instances)
         for subcls in cls.__subclasses__():
@@ -59,7 +62,7 @@ class dot:
 
 
 if __name__ == "__main__":
-    # Quick test
+    
     d = dot(1, 2, "d")
     print("Direct dot instances:", dot.get_instances())
     print("All dot instances:", dot.get_all_instances())
