@@ -419,7 +419,7 @@ elif tab == "Report":
         st.image(
             "src/velocity_plot.png", caption="Velocity Analysis", use_container_width=True
         )
-        st.write(f"The velocity plot shows the velocity of the selected point {st.session_state["p_c"]} for one rotation of the swivel.")
+        st.write(f"The velocity plot shows the velocity of the selected point {st.session_state["p_c"]} for one rotation of the swivel with a consistant angular velocity of 0.6981 rad/s.")
 
     else:
         st.warning("Please calculate the mechanism first.")
