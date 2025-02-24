@@ -35,7 +35,7 @@ Dieses Projekt befasst sich mit der Simulation ebener Mechanismen. Die methodisc
    ```bash
    git clone <repository-url>
    ```
-2. **Virtual environemt erstellen:**  
+2. **Virtual environment erstellen:**  
    ```bash
    python -m venv venv
    ```
@@ -269,16 +269,16 @@ Implementierung einer JSON-Datenbank mittels TinyDB zur Speicherung und zum Lade
 - **Variante A:**  
 Punkte und Verbindungen im Build-Tab händisch erstellen
   - Mechanismus definieren 
-  - live-preview wird autoamtisch erstellt 
+  - live-preview wird automatisch erstellt 
   - Freiheitsgrade können, müssen aber nicht, händisch überprüft werden 
   ![Build-Tab](doc/Build_tab.png)
-  - der erstellte Mechanismus muss für die Berechnung gespeichert werden (entwerder Temporär oder als eigene Datenbank)
+  - der erstellte Mechanismus muss für die Berechnung gespeichert werden (entweder Temporär oder als eigene Datenbank)
   ![Build-Tab-Save](doc/Build_tab_save.png)
   - in den Plot-Tab wechseln und als data source den erstellten Mechanismus auswählen (temporäre Datei bzw. eigene Datenbank)
   ![Plot-Tab](doc/Plot_tab_select.png)
   - Punkt auswählen dessen Bahnkurve zusätzlich zum Bewegungsablauf geplottet werden soll
   - mit *calculate* die Berechnung starten (Berechnung und erstellen der Simulation kann einige Sekunden dauern)
-  - im Download-Bereich unter der Visulaisierung können alle erstellen Dateien (Stückliste, CSV-Bahnkurve, CAD-Modell, Animation, Datenbank, Bahnkurve als png) heruntergeladen werden  
+  - im Download-Bereich unter der Visualisierung können alle erstellen Dateien (Stückliste, CSV-Bahnkurve, CAD-Modell, Animation, Datenbank, Bahnkurve als png) heruntergeladen werden  
   
   ![Plot-Tab-Download](doc/Plot_tab_download.png)	
 
@@ -289,7 +289,7 @@ Mechanismus importieren
   ![Plot-Tab-Upload](doc/Plot_tab_upload.png)
   - Punkt auswählen dessen Bahnkurve zusätzlich zum Bewegungsablauf geplottet werden soll
   - mit *calculate* die Berechnung starten (Berechnung und erstellen der Simulation kann einige Sekunden dauern)
-  - im Download-Bereich unter der Visulaisierung können alle erstellen Dateien (Stückliste, CSV-Bahnkurve, CAD-Modell, Animation, Datenbank, Bahnkurve als png) heruntergeladen werden
+  - im Download-Bereich unter der Visualisierung können alle erstellen Dateien (Stückliste, CSV-Bahnkurve, CAD-Modell, Animation, Datenbank, Bahnkurve als png) heruntergeladen werden
   
 
 - **Report-Tab:**  
