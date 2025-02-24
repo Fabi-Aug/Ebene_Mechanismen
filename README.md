@@ -184,7 +184,7 @@ Bisher wurden folgende Erweiterungen implementiert:
 
 - **Erweiterung auf mehrere Fixpunkte:**
   Die Simulation unterstützt nun mehrere Fixpunkte, um die Bewegung des Mechanismus in verschiedenen Konfigurationen zu analysieren.  *Beispiel anhand vom "two-legged-Strandbeest"*
-  ![two_legged_strandbeest](doc/two_legged_strandbeest.gif)
+  ![two_legged_strandbeest](doc/two_legged_strandbeest_animation.gif)
 
 - **Auszeichnungssprache mittels JSON-Datenbank**
   Implementierung einer JSON-Datenbank mittels TinyDB zur Speicherung und zum Laden von Mechanismen. Zusätzlich können externe Mechanismen importiert und in der Simulation verwendet werden. Bereits erstellte Mechanismen können heruntergeladen werden. 
