@@ -211,6 +211,17 @@ class Calculation:
         swivel_lines = []
         n_frames = len(dot_trajectory.x_values) if dot_trajectory.x_values else 0
 
+        velocity_quiver = ax.quiver(
+            [dot_trajectory.x_values[0]],
+            [dot_trajectory.y_values[0]],
+            [0],
+            [0],
+            angles="xy",
+            scale_units="xy",
+            scale=1,
+            color="green",
+        )
+
         def init():
             traj_line.set_data([], [])
             for cl in circle_lines:
@@ -221,8 +232,17 @@ class Calculation:
                 movingdot_line.set_data([], [])
             for swivel_line in swivel_lines:
                 swivel_line.set_data([], [])
+            velocity_quiver.set_offsets(
+                np.array([[dot_trajectory.x_values[0], dot_trajectory.y_values[0]]])
+            )
+            velocity_quiver.set_UVC(0, 0)
             return (
-                [traj_line] + circle_lines + conn_lines + movingdot_lines + swivel_lines
+                [traj_line]
+                + circle_lines
+                + conn_lines
+                + movingdot_lines
+                + swivel_lines
+                + [velocity_quiver]
             )
 
         def update(frame):
@@ -243,7 +263,7 @@ class Calculation:
                     coord1_y = connection.dot1.y_values[frame]
                     coord2_x = connection.dot2.x_values[frame]
                     coord2_y = connection.dot2.y_values[frame]
-                conn_lines[i].set_data([coord1_x, coord2_x], [coord1_y, coord2_y])
+                    conn_lines[i].set_data([coord1_x, coord2_x], [coord1_y, coord2_y])
             for i, movingdot in enumerate(self.movabledots):
                 x = movingdot.x_values[frame]
                 y = movingdot.y_values[frame]
@@ -258,8 +278,25 @@ class Calculation:
                     (swivel_line,) = ax.plot([], [], "bo")
                     swivel_lines.append(swivel_line)
                 swivel_lines[i].set_data([x], [y])
+
+            x = dot_trajectory.x_values[frame]
+            y = dot_trajectory.y_values[frame]
+            if frame < n_frames - 1:
+                dx = dot_trajectory.x_values[frame + 1] - dot_trajectory.x_values[frame]
+                dy = dot_trajectory.y_values[frame + 1] - dot_trajectory.y_values[frame]
+            else:
+                dx = 0
+                dy = 0
+            velocity_quiver.set_offsets(np.array([[x, y]]))
+            velocity_quiver.set_UVC(dx * 50, dy * 50)  # scale the velocity vector
+
             return (
-                [traj_line] + circle_lines + conn_lines + movingdot_lines + swivel_lines
+                [traj_line]
+                + circle_lines
+                + conn_lines
+                + movingdot_lines
+                + swivel_lines
+                + [velocity_quiver]
             )
 
         ani = animation.FuncAnimation(
@@ -274,6 +311,28 @@ class Calculation:
         ani.save("src/Animation.gif", writer="pillow", fps=30)
         plt.savefig("src/Animation_last_frame.png", dpi=600)
         print("Animation saved as 'src/Animation.gif'")
+        self.plot_velocity(dot_trajectory, ani.event_source.interval / 1000)
+
+    def plot_velocity(self, dot_trajectory, dt):
+        """
+        Erzeugt und speichert ein Liniendiagramm der (absoluten) Geschwindigkeit,
+        basierend auf den Positionsdaten des übergebenen Punktes.
+        """
+        x = np.array(dot_trajectory.x_values)
+        y = np.array(dot_trajectory.y_values)
+        dx = np.diff(x)
+        dy = np.diff(y)
+
+        speed = np.sqrt(dx**2 + dy**2) / dt
+        t = np.arange(len(speed)) * dt
+
+        plt.figure()
+        plt.plot(t, speed, color="Blue")
+        plt.xlabel("Time (s)")
+        plt.ylabel("Velocity (Units/s)")
+        plt.savefig("src/velocity_plot.png", dpi=300)
+        plt.close()
+        print("Geschwindigkeitsplot saved as 'velocity_plot.png'")
 
     def create_bom(self):
         """
@@ -451,4 +510,3 @@ if __name__ == "__main__":
     # select an existing dot id to save its trajectory
     calc.save_csv("test.csv", "e")
     calc.animate_plot("e")
-    calc.error_plot()

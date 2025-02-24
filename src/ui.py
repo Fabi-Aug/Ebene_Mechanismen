@@ -415,6 +415,11 @@ elif tab == "Report":
         st.write(
             f"The trajectory plot shows the mechanism({st.session_state["file_name"]})of the selected point {st.session_state["p_c"]}."
         )
+        st.subheader("Velocity Analysis")
+        st.image(
+            "src/velocity_plot.png", caption="Velocity Analysis", use_container_width=True
+        )
+        st.write(f"The velocity plot shows the velocity of the selected point {st.session_state["p_c"]} for one rotation of the swivel.")
 
     else:
         st.warning("Please calculate the mechanism first.")
